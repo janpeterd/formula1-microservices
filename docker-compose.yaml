@@ -1,0 +1,78 @@
+services:
+ mongo-teams:
+  image: mongo:latest
+  ports:
+    - 27017:27017
+  volumes:
+    - mongodb_team_data:/data/db
+    
+ mysql-drivers:
+  image: mysql:latest
+  ports:
+    - 3306:3306
+  volumes:
+    - mysql_driver_data:/var/lib/mysql
+  environment:
+   MYSQL_ROOT_PASSWORD: abc123
+    
+ mysql-circuits:
+  image: mysql:latest
+  ports:
+    - 3307:3306
+  volumes:
+    - mysql_circuit_data:/var/lib/mysql
+  environment:
+   MYSQL_ROOT_PASSWORD: abc123
+    
+ # TODO: Add own java microservice services
+ # product-service:
+ #  depends_on:
+ #    - mongo-products
+ #  image: miverboven/product-service
+ #  ports:
+ #    - 8080:8080
+ #  links:
+ #    - mongo-products
+ #  environment:
+ #   MONGODB_PORT: 27017
+ #   MONGODB_HOST: mongo-products
+ #
+ # inventory-service:
+ #  depends_on:
+ #    - mysql-inventory
+ #  image: miverboven/inventory-service
+ #  ports:
+ #    - 8082:8082
+ #  links:
+ #    - mysql-inventory
+ #  # HERE YOU HAVE TO USE 3306 INTERNAL PORT !!!!!
+ #  # DOCKER NETEWORK (DOCKER DNS) uses internal ports
+ #  environment:
+ #   MYSQL_DB_USERNAME: root
+ #   MYSQL_DB_PASSWORD: abc123
+ #   MYSQL_DB_HOST: mysql-inventory
+ #   MYSQL_DB_PORT: 3306
+ #
+ # order-service:
+ #  depends_on:
+ #    - product-service
+ #    - inventory-service
+ #  image: miverboven/order-service
+ #  ports:
+ #    - 8081:8081
+ #  links:
+ #    - product-service
+ #    - inventory-service
+ #  environment:
+ #   PRODUCT_SERVICE_BASEURL: product-service:8080
+ #   INVENTORY_INFO_SERVICE_BASEURL: inventory-service:8082
+ #   MYSQL_DB_USERNAME: root
+ #   MYSQL_DB_PASSWORD: abc123
+ #   MYSQL_DB_HOST: mysql-order
+ #   MYSQL_DB_PORT: 3306
+
+volumes:
+ mongodb_team_data:
+ mysql_driver_data:
+ mysql_circuit_data:
+

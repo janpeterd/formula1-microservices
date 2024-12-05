@@ -8,4 +8,6 @@ import java.util.List;
 public interface TeamRepository extends MongoRepository<Team, String> {
     public List<Team> getAllByTeamCodeIn(List<String> teamCodes);
 
+    public Team findByTeamCode(String teamCode);
+
 }

@@ -1,20 +1,22 @@
 package fact.it.teamservice.model;
 
+import java.util.List;
+
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(value = "team")
+@Document(value = "teams")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
 public class Team {
-    private String id;
-    private String teamCode;
-    private String name;
-    // TODO: link drivers
-    // TODO: track season points
+  private String id;
+  private String teamCode;
+  private String name;
+  private Integer points;
 }

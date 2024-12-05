@@ -1,12 +1,14 @@
-package fact.it.driverservice.dto;
+package fact.it.teamservice.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class DriverRequest {
     private String firstName;
     private String lastName;

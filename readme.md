@@ -1,6 +1,6 @@
 # Project Advanced Programming Topics
 
-1. ❔ **ALGEMENE EISEN & DOCUMENTATIE** (alles samen _+60%_ op Project)
+## 1. ❔ **ALGEMENE EISEN & DOCUMENTATIE** (alles samen _+60%_ op Project)
 
 - Basics:
 
@@ -25,14 +25,48 @@
 - Testing:
   - Unit testing all the Service classes
 
-2. 🔧 SUGGESTIES VOOR AANVULLINGEN: FUNCTIE
+## 2. 🔧 SUGGESTIES VOOR AANVULLINGEN: FUNCTIE
 
-   - Maak een front-end voor je applicatie (ook in container). (+15%)
-   - Zet de deployment docker-compose.yml om naar Kubernetes Manifest .yml-files (+5%)
-   - Zet monitoring op met Prometheus en demonstreer met screenshots. (+20%)
-   - Zet een Grafana om te gebruiken in plaats van de standaard Prometheus Expression Browser met PromQL (+15%)
-   - Gebruik ClusterIP & Nodeport op een logische manier (+5%)
-   - Maak en gebruik je eigen Auth service i.p.v. GCP OAuth2 (+25%)
-   - Implementeer rate-limiting op je Spring Cloud Gateway (+5%)
-   - Maak de interactie met minstens 1 service event-driven door gebruik te maken van een message queue zoals ActiveMQ en async (+20%)
-   - Gebruik Kafka i.p.v. ActiveMQ (dit heeft twee pods nodig) (+15%)
+- Maak een front-end voor je applicatie (ook in container). (+15%)
+- Zet de deployment docker-compose.yml om naar Kubernetes Manifest .yml-files (+5%)
+- Zet monitoring op met Prometheus en demonstreer met screenshots. (+20%)
+- Zet een Grafana om te gebruiken in plaats van de standaard Prometheus Expression Browser met PromQL (+15%)
+- Gebruik ClusterIP & Nodeport op een logische manier (+5%)
+- Maak en gebruik je eigen Auth service i.p.v. GCP OAuth2 (+25%)
+- Implementeer rate-limiting op je Spring Cloud Gateway (+5%)
+- Maak de interactie met minstens 1 service event-driven door gebruik te maken van een message queue zoals ActiveMQ en async (+20%)
+- Gebruik Kafka i.p.v. ActiveMQ (dit heeft twee pods nodig) (+15%)
+
+## 3. Overview Formula 1 app
+
+### 3.1 Thema
+
+Als thema voor deze microservices-applicatie heb ik gekozen voor formule 1.
+Mijn applicatie houdt data bij over de chauffeurs (driver), de circuits en de
+teams.
+
+Voor elk van deze entiteiten heb ik een aparte API gemaakt in `Java` met behulp
+van `spring-boot`.
+
+- Driver service
+  - application-name: driver-service
+  - Port: 8081
+  - Connected to mysql
+    - port 3306
+    - db = driverdb
+    - user = root
+    - pwd = abc123
+- Circuit service
+  - application-name: circuit-service
+  - Port: 8082
+  - Connected to mysql
+    - port 3307
+    - db = circuitdb
+    - user = root
+    - pwd = abc123
+- Team service
+  - application-name: driver-service
+  - Port: 8080
+  - Connected to mongodb
+    - port 27017
+    - document = 27017
