@@ -56,12 +56,12 @@ van `spring-boot`.
     - db = driverdb
     - user = root
     - pwd = abc123
-- Circuit service
-  - application-name: circuit-service
+- Grand Prix service
+  - application-name: gp-service
   - Port: 8082
   - Connected to mysql
     - port 3307
-    - db = circuitdb
+    - db = gpdb
     - user = root
     - pwd = abc123
 - Team service
@@ -70,3 +70,6 @@ van `spring-boot`.
   - Connected to mongodb
     - port 27017
     - document = 27017
+- Gateway
+  - application-name: api-gateway
+  - Port: 8083

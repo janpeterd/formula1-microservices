@@ -1,12 +1,12 @@
 services:
- mongo-teams:
+ mongo-team:
   image: mongo:latest
   ports:
     - 27017:27017
   volumes:
     - mongodb_team_data:/data/db
     
- mysql-drivers:
+ mysql-driver:
   image: mysql:latest
   ports:
     - 3306:3306
@@ -15,64 +15,65 @@ services:
   environment:
    MYSQL_ROOT_PASSWORD: abc123
     
- mysql-circuits:
+ mysql-gp:
   image: mysql:latest
   ports:
     - 3307:3306
   volumes:
-    - mysql_circuit_data:/var/lib/mysql
+    - mysql_gp_data:/var/lib/mysql
   environment:
    MYSQL_ROOT_PASSWORD: abc123
     
- # TODO: Add own java microservice services
- # product-service:
- #  depends_on:
- #    - mongo-products
- #  image: miverboven/product-service
- #  ports:
- #    - 8080:8080
- #  links:
- #    - mongo-products
- #  environment:
- #   MONGODB_PORT: 27017
- #   MONGODB_HOST: mongo-products
- #
- # inventory-service:
- #  depends_on:
- #    - mysql-inventory
- #  image: miverboven/inventory-service
- #  ports:
- #    - 8082:8082
- #  links:
- #    - mysql-inventory
- #  # HERE YOU HAVE TO USE 3306 INTERNAL PORT !!!!!
- #  # DOCKER NETEWORK (DOCKER DNS) uses internal ports
- #  environment:
- #   MYSQL_DB_USERNAME: root
- #   MYSQL_DB_PASSWORD: abc123
- #   MYSQL_DB_HOST: mysql-inventory
- #   MYSQL_DB_PORT: 3306
- #
- # order-service:
- #  depends_on:
- #    - product-service
- #    - inventory-service
- #  image: miverboven/order-service
- #  ports:
- #    - 8081:8081
- #  links:
- #    - product-service
- #    - inventory-service
- #  environment:
- #   PRODUCT_SERVICE_BASEURL: product-service:8080
- #   INVENTORY_INFO_SERVICE_BASEURL: inventory-service:8082
- #   MYSQL_DB_USERNAME: root
- #   MYSQL_DB_PASSWORD: abc123
- #   MYSQL_DB_HOST: mysql-order
- #   MYSQL_DB_PORT: 3306
+ driver-service:
+  depends_on:
+    - mysql-driver
+  image: janpeterd/driver-service:latest
+  ports:
+    - 8081:8081
+  links:
+    - mysql-driver
+  # HERE YOU HAVE TO USE 3306 INTERNAL PORT !!!!!
+  # DOCKER NETEWORK (DOCKER DNS) uses internal ports
+  environment:
+   MYSQL_DB_USERNAME: root
+   MYSQL_DB_PASSWORD: abc123
+   MYSQL_DB_HOST: mysql-driver
+   MYSQL_DB_PORT: 3306
+
+ team-service:
+  depends_on:
+    - mongo-team
+  image: janpeterd/team-service:latest
+  ports:
+    - 8080:8080
+  links:
+    - mongo-team
+  environment:
+   MONGODB_PORT: 27017
+   MONGODB_HOST: mongo-team
+   DRIVER_SERVICE_BASEURL: driver-service:8081
+ 
+
+ gp-service:
+  depends_on:
+    - driver-service
+    - team-service
+  image: janpeterd/gp-service:latest
+  ports:
+    - 8082:8082
+  links:
+    - driver-service
+    - team-service
+  environment:
+   DRIVER_SERVICE_BASEURL: driver-service:8081
+   TEAM_SERVICE_BASEURL: team-service:8080
+   MYSQL_DB_USERNAME: root
+   MYSQL_DB_PASSWORD: abc123
+   MYSQL_DB_HOST: mysql-gp
+   MYSQL_DB_PORT: 3306
 
 volumes:
  mongodb_team_data:
  mysql_driver_data:
- mysql_circuit_data:
+ mysql_gp_data:
 

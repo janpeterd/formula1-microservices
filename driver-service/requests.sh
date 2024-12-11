@@ -40,7 +40,6 @@ add() {
 
 get() {
   # Get all drivers
-  echo "Fetching all drivers..."
   curl -X GET "$BASE_URL/driver/all"
 }
 

@@ -15,5 +15,5 @@ public class TeamResponse {
     private String teamCode;
     private String name;
     private Integer points;
-    private List<String> driverCodes; // TODO: maybe get drivers from driverservice?
+    private List<DriverResponse> drivers;
 }
