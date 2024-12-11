@@ -4,17 +4,37 @@ server:
 logging:
   level:
     root: INFO
-    org.springframework.cloud.gateway: TRACE
+    org.springframework.cloud.gateway: INFO
     org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator: INFO
-    reactor.netty: TRACE
+    reactor.netty: INFO
+    org.springframework.security: TRACE
 
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENTID}
+            client-secret: ${GOOGLE_CLIENTSECRET}
+            scope: openid,profile,email
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
+          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
   cloud:
     gateway:
       routes:
-        - id: driver-service
+        - id: driver-service-all
           uri: http://${DRIVER_SERVICE_BASEURL:localhost:8081}
           predicates:
             - Path=/drivers
+            - Method=GET
           filters:
             - SetPath=/api/driver
+        - id: team-service
+          uri: http://${TEAM_SERVICE_BASEURL:localhost:8080}
+          predicates:
+            - Path=/teams
+          filters:
+            - SetPath=/api/team

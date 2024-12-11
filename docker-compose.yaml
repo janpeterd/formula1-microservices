@@ -72,6 +72,24 @@ services:
    MYSQL_DB_HOST: mysql-gp
    MYSQL_DB_PORT: 3306
 
+ api-gateway:
+   depends_on:
+     - driver-service
+     - team-service
+     - gp-service
+   image: janpeterd/formula1-api-gateway:latest
+   ports:
+     - 8083:8083
+   links:
+     - driver-service
+     - team-service
+     - gp-service
+   environment:
+     DRIVER_SERVICE_BASEURL: driver-service:8081
+     TEAM_SERVICE_BASEURL: team-service:8080
+     GP_SERVICE_BASEURL: gp-service:8082
+
+
 volumes:
  mongodb_team_data:
  mysql_driver_data:

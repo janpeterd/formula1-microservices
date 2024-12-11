@@ -86,7 +86,6 @@ public class GpService {
 
     public List<GpResponse> getAllGps() {
         List<Gp> gps = gpRepository.findAll();
-        System.out.println("Gps " + gps);
         return gps.stream().map(this::mapToGpResponse).toList();
     }
 
