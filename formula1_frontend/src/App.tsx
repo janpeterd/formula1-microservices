@@ -24,7 +24,7 @@ const gpSchema = z.object({
   winningDriverCode: z.string().length(36).optional(),
   secondDriverCode: z.string().length(36).optional(),
   thirdDriverCode: z.string().length(36).optional(),
-  file: z
+  fileUrl: z
     .instanceof(File)
     .refine(
       (file) => file && file.size <= 35 * 1024 * 1024,
@@ -54,13 +54,30 @@ function ProfileForm() {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log("POSTING: ", values)
-    axios.post('http://localhost:8082/api/gp', {
-      values
-    }).then(function (response) {
-      console.log(response);
-    }).catch(function (error) {
-      console.log(error);
-    });
+
+    if (values.fileUrl != null) {
+      axios.post('http://localhost:8084/api/upload', {
+        "file": values.fileUrl
+      }, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Set multipart header
+        }
+
+      }).then(function (response) {
+        console.log(response);
+        axios.post('http://localhost:8082/api/gp', {
+          ...values, fileUrl: response.data
+        }).then(function (response) {
+          console.log(response);
+        }).catch(function (error) {
+          console.log(error);
+        });
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }
+
+
   }
 
   return (
@@ -110,7 +127,7 @@ function ProfileForm() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input placeholder="Distance in meters" type="number" valueAsNumber {...field} />
+                  <Input placeholder="Distance in meters" type="number" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -181,7 +198,7 @@ function ProfileForm() {
             )}
           />
           <FormField control={form.control}
-            name="file"
+            name="fileUrl"
             render={({ field }) => (
               <FormItem>
                 <FormControl>
@@ -189,7 +206,7 @@ function ProfileForm() {
                     <Label className="block text-left" htmlFor="imageUpload">Image</Label>
                     <Input
                       id="fileUpload"
-                      name="file"
+                      name="fileUrl"
                       type="file"
                       onChange={(e) => {
                         if (e.target.files && e.target.files[0]) {
