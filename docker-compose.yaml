@@ -116,6 +116,11 @@ services:
    MYSQL_DB_HOST: mysql-gp
    MYSQL_DB_PORT: 3306
 
+ image-service:
+  image: janpeterd/formula1-image-service:latest
+  ports:
+    - 8084:8084
+
  api-gateway:
    depends_on:
      - driver-service
