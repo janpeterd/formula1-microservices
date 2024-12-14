@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,7 @@ public class GpController {
         return gpService.getAllGps();
     }
 
+    @CrossOrigin
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public void createGp(@RequestBody GpRequest gpRequest) {

@@ -21,4 +21,5 @@ public class GpRequest {
     private String thirdDriverCode;
     private String winningTeamCode;
     private LocalDate raceDate;
+    private String imageUrl;
 }

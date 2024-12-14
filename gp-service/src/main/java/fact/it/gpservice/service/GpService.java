@@ -1,13 +1,12 @@
 package fact.it.gpservice.service;
 
-import java.sql.Driver;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import fact.it.gpservice.dto.DriverResponse;
@@ -17,7 +16,6 @@ import fact.it.gpservice.dto.TeamResponse;
 import fact.it.gpservice.model.Gp;
 import fact.it.gpservice.repository.GpRepository;
 import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -48,6 +46,7 @@ public class GpService {
                     .winningDriverCode("919e46b3-57d3-4775-b5a8-8dc5b2776d0c")
                     .secondDriverCode("c5709243-aadb-4c10-bafb-cdb8ed767790")
                     .thirdDriverCode("6baeb4c9-f7d1-4176-9854-f50ff290aae0")
+                    .imageUrl("/assets/test.png")
                     .build();
 
             Gp gp1 = Gp.builder()
@@ -62,6 +61,7 @@ public class GpService {
                     .winningDriverCode("c5709243-aadb-4c10-bafb-cdb8ed767790")
                     .secondDriverCode("919e46b3-57d3-4775-b5a8-8dc5b2776d0c")
                     .thirdDriverCode("6baeb4c9-f7d1-4176-9854-f50ff290aae0")
+                    .imageUrl("/assets/test.png")
                     .build();
 
             Gp gp2 = Gp.builder()
@@ -76,6 +76,7 @@ public class GpService {
                     .winningDriverCode("6baeb4c9-f7d1-4176-9854-f50ff290aae0")
                     .secondDriverCode("919e46b3-57d3-4775-b5a8-8dc5b2776d0c")
                     .thirdDriverCode("c5709243-aadb-4c10-bafb-cdb8ed767790")
+                    .imageUrl("/assets/test.png")
                     .build();
 
             gpRepository.save(gp);
@@ -102,6 +103,7 @@ public class GpService {
                 .secondDriverCode(gpRequest.getSecondDriverCode())
                 .thirdDriverCode(gpRequest.getThirdDriverCode())
                 .winningTeamCode(gpRequest.getWinningDriverCode())
+                .imageUrl(gpRequest.getImageUrl())
                 .build();
 
         gpRepository.save(gp);
@@ -140,6 +142,7 @@ public class GpService {
                 .winningDriver(getDriverByCode(gp.getWinningDriverCode()))
                 .secondDriver(getDriverByCode(gp.getSecondDriverCode()))
                 .thirdDriver(getDriverByCode(gp.getThirdDriverCode()))
+                .imageUrl(gp.getImageUrl())
                 .build();
     }
 }

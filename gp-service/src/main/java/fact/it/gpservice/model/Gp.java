@@ -31,4 +31,5 @@ public class Gp {
     private String winningDriverCode;
     private String secondDriverCode;
     private String thirdDriverCode;
+    private String imageUrl;
 }

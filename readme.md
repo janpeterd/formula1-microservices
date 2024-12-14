@@ -73,3 +73,6 @@ van `spring-boot`.
 - Gateway
   - application-name: api-gateway
   - Port: 8083
+- Image service
+  - application-name: image-service
+  - Port: 8084

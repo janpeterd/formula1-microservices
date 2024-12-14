@@ -24,4 +24,5 @@ public class GpResponse {
     private DriverResponse thirdDriver;
     private TeamResponse winningTeam;
     private LocalDate raceDate;
+    private String imageUrl;
 }
