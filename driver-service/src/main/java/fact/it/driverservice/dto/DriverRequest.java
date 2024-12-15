@@ -13,4 +13,5 @@ public class DriverRequest {
     private String country;
     private String teamCode;
     private Integer seasonPoints;
+    private String imageUrl;
 }

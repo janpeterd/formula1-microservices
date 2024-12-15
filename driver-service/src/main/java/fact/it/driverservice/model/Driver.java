@@ -30,4 +30,5 @@ public class Driver {
     private String country;
     private String teamCode;
     private Integer seasonPoints;
+    private String imageUrl;
 }

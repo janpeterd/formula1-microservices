@@ -3,6 +3,13 @@
 @tailwind utilities;
 @layer base {
   :root {
-    --radius: 0.5rem
+    --radius: 0.5rem;
+  }
+  html {
+    font-family: "Asap", sans-serif;
+    font-optical-sizing: auto;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
 }

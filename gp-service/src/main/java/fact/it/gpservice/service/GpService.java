@@ -131,8 +131,8 @@ public class GpService {
 
     private GpResponse mapToGpResponse(Gp gp) {
         return GpResponse.builder()
-                .id(gp.getId())
                 .gpCode(gp.getGpCode())
+                .name(gp.getName())
                 .country(gp.getCountry())
                 .city(gp.getCity())
                 .distanceMeters(gp.getDistanceMeters())

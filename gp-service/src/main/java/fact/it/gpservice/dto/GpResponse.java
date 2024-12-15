@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class GpResponse {
-    private Long id;
     private String gpCode;
     private String name;
     private String country;

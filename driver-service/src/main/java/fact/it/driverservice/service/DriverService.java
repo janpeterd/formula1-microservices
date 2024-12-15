@@ -31,6 +31,7 @@ public class DriverService {
                     .country("United Kingdom")
                     .teamCode("e600a035-1f38-4319-99d2-01607db9c980")
                     .seasonPoints(50)
+                    .imageUrl("/images/hamilton.jpg")
                     .build();
 
             Driver driver1 = Driver.builder()
@@ -39,6 +40,7 @@ public class DriverService {
                     .lastName("Russel")
                     .country("United Kingdom")
                     .teamCode("e600a035-1f38-4319-99d2-01607db9c980")
+                    .imageUrl("/images/george_russel.jpg")
                     .seasonPoints(20)
                     .build();
 
@@ -48,24 +50,35 @@ public class DriverService {
                     .lastName("Verstappen")
                     .country("The Netherlands")
                     .teamCode("ac879010-39cd-4562-badf-732664ea68c3")
+                    .imageUrl("/images/max-verstappen.webp")
                     .seasonPoints(10)
+                    .build();
+            Driver driver3 = Driver.builder()
+                    .driverCode("1bdd16ec-3a29-484c-9c44-abcaa8cdb23a")
+                    .firstName("Carlos")
+                    .lastName("Sainz Jr.")
+                    .country("Spain")
+                    .teamCode("ac879010-39cd-4562-badf-732664ea68c3")
+                    .imageUrl("/images/sainz.jpg")
+                    .seasonPoints(4)
                     .build();
 
             driverRepository.save(driver);
             driverRepository.save(driver1);
             driverRepository.save(driver2);
+            driverRepository.save(driver3);
         }
     }
 
     private DriverResponse mapToDriverResponse(Driver driver) {
         return DriverResponse.builder()
-                .id(driver.getId())
                 .driverCode(driver.getDriverCode())
                 .firstName(driver.getFirstName())
                 .lastName(driver.getLastName())
                 .country(driver.getCountry())
                 .seasonPoints(driver.getSeasonPoints())
                 .teamCode(driver.getTeamCode())
+                .imageUrl(driver.getImageUrl())
                 .build();
     }
 
@@ -78,6 +91,7 @@ public class DriverService {
                 .country(driverRequest.getCountry())
                 .teamCode(driverRequest.getTeamCode())
                 .seasonPoints(driverRequest.getSeasonPoints())
+                .imageUrl(driverRequest.getImageUrl())
                 .build();
         driverRepository.save(driver);
     }
@@ -102,6 +116,7 @@ public class DriverService {
             driver.setCountry(updateDriver.getCountry());
             driver.setTeamCode(updateDriver.getTeamCode());
             driver.setSeasonPoints(updateDriver.getSeasonPoints());
+            driver.setImageUrl(updateDriver.getImageUrl());
             driverRepository.save(driver);
             System.out.println("saved driver " + driver);
             return Optional.of(mapToDriverResponse(driver));

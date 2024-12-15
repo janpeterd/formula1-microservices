@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class GpController {
     private final GpService gpService;
 
+    @CrossOrigin
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public List<GpResponse> getAllGps() {
