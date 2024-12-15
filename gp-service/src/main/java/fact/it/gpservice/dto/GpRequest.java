@@ -5,10 +5,12 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class GpRequest {
     private String gpCode;
     private String name;
@@ -22,4 +24,5 @@ public class GpRequest {
     private String winningTeamCode;
     private LocalDate raceDate;
     private String imageUrl;
+    private String trackImageUrl;
 }

@@ -26,7 +26,7 @@ function DriverPage() {
       <hr className="w-full my-12" />
       <div className="flex flex-wrap justify-center items-center gap-8">
         {drivers.map((driver) => (
-          <DriverCard driver={driver} />
+          <DriverCard key={driver.driverCode} driver={driver} />
         ))}
       </div>
     </div>

@@ -1,16 +1,13 @@
 package fact.it.teamservice.service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import fact.it.teamservice.dto.DriverRequest;
 import fact.it.teamservice.dto.DriverResponse;
 import fact.it.teamservice.dto.TeamRequest;
 import fact.it.teamservice.dto.TeamResponse;
@@ -36,12 +33,14 @@ public class TeamService {
                     .teamCode("e600a035-1f38-4319-99d2-01607db9c980")
                     .name("Mercedes")
                     .points(10)
+                    .imageUrl("images/mercedes.avif")
                     .build();
 
             Team team1 = Team.builder()
                     .teamCode("ac879010-39cd-4562-badf-732664ea68c3")
-                    .name("Red Bull")
+                    .name("Red Bull Racing")
                     .points(20)
+                    .imageUrl("images/red bull.avif")
                     .build();
 
             teamRepository.save(team);
@@ -68,6 +67,7 @@ public class TeamService {
                 .teamCode(team.getTeamCode())
                 .name(team.getName())
                 .points(team.getPoints())
+                .imageUrl(team.getImageUrl())
                 .drivers(drivers)
                 .build();
         return response;
@@ -77,6 +77,7 @@ public class TeamService {
         Team team = Team.builder()
                 .name(teamRequest.getName())
                 .points(teamRequest.getPoints())
+                .imageUrl(teamRequest.getImageUrl())
                 .build();
 
         teamRepository.save(team);
@@ -90,7 +91,8 @@ public class TeamService {
     }
 
     public TeamResponse getTeamByTeamCode(String teamCode) {
-        return mapToTeamResponse(teamRepository.findByTeamCode(teamCode));
+        Optional<Team> team = teamRepository.findTeamByTeamCode(teamCode);
+        return team.map(this::mapToTeamResponse).orElse(null);
     }
 
 }

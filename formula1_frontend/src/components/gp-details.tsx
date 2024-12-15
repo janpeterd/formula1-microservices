@@ -9,7 +9,7 @@ function GrandPrixDetails({ gp }: { gp: GpResponse }) {
       <h1 className="font-f1 font-bold text-3xl italic py-1">{gp.name} - {gp.country}</h1>
       <div className="flex flex-wrap justify-between items-center border-accent border-r-[12px] border-t-[12px] rounded-tr-2xl p-6 md:p-14 mb-10">
         <div className="h-[500px] w-full lg:w-1/2" >
-          <img src={`http://localhost:8084${gp.imageUrl}`} alt={gp.name} className="h-full w-auto object-contain" />
+          <img src={`http://localhost:8084/${gp.trackImageUrl}`} alt={gp.name} className="h-full w-auto object-contain" />
         </div>
         <div className="lg:flex-grow grid grid-cols-1 w-full md:grid-rows-2 md:w-auto md:grid-flow-col gap-4">
           <GrandPrixStat label="Distance in meters" stat={gp.distanceMeters.toString()} />

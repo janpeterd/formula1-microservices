@@ -12,10 +12,11 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class DriverResponse {
-    private Long id; // only include the ID in the response
-    private String driverCode; // unique code to use in api call
+    private String driverCode;
     private String firstName;
     private String lastName;
     private String country;
-    private Integer seasonPoints; // TODO: This should probably be linked to a
+    private String teamCode;
+    private Integer seasonPoints;
+    private String imageUrl;
 }

@@ -41,6 +41,7 @@ public class ImageUploadService {
 
             return relativePath.toString();
         }
+        System.out.println("IMG FILETYPE NOT ALLOWED");
         throw new InvalidContentTypeException(
                 "Invalid file type. Allowed types are: image/jpeg, image/png, image/webp.");
 

@@ -13,8 +13,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 public class Team {
-  private String id;
-  private String teamCode;
-  private String name;
-  private Integer points;
+    private String id;
+    private String teamCode;
+    private String name;
+    private Integer points;
+    private String imageUrl;
 }

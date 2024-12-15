@@ -14,7 +14,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import axios from "axios"
-import DriverSelect from "./driver-select"
+import ObjectSelect from "./object-select"
+import { useEffect, useState } from "react"
+import DriverApi from "@/lib/driver_service"
+import DriverResponse from "@/dto/driverResponse"
+import TeamResponse from "@/dto/teamResponse"
+import TeamApi from "@/lib/team_service"
 
 const gpSchema = z.object({
   name: z.string().min(2).max(50),
@@ -22,11 +27,26 @@ const gpSchema = z.object({
   city: z.string().min(2).max(50),
   distanceMeters: z.string().transform((val) => Number(val)).pipe(z.number().positive()),
   laps: z.string().transform((val) => Number(val)).pipe(z.number().positive()),
-  winningTeamCode: z.string().length(36).optional(),
-  winningDriverCode: z.string().length(36).optional(),
-  secondDriverCode: z.string().length(36).optional(),
-  thirdDriverCode: z.string().length(36).optional(),
-  fileUrl: z
+  raceDate: z.date(),
+  winningTeamCode: z.string().length(36),
+  winningDriverCode: z.string().length(36),
+  secondDriverCode: z.string().length(36),
+  thirdDriverCode: z.string().length(36),
+  imageUrl: z
+    .instanceof(File)
+    .refine(
+      (file) => file && file.size <= 35 * 1024 * 1024,
+      "File size should be 35MB or less"
+    )
+    .refine(
+      (file) => {
+        if (!file) return false;
+        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        return validTypes.includes(file.type);
+      },
+      "Please upload a JPG, PNG, or WEBP image"
+    ),
+  trackImageUrl: z
     .instanceof(File)
     .refine(
       (file) => file && file.size <= 35 * 1024 * 1024,
@@ -42,9 +62,49 @@ const gpSchema = z.object({
     )
 })
 
+
+type ValueLabel = {
+  value: string;
+  label: string;
+};
+
+
 function GrandPrixForm() {
 
+  const [drivers, setDrivers] = useState<ValueLabel[]>([]);
+  const [teams, setTeams] = useState<ValueLabel[]>([]);
 
+  useEffect(() => {
+    const fetchDrivers = async () => {
+      try {
+        const response = await DriverApi.get();
+        //setDrivers(response.data);
+        const mappedDrivers: ValueLabel[] = response.data.map((driver: DriverResponse) => ({
+          value: driver.driverCode, // or the unique identifier
+          label: `${driver.firstName} ${driver.lastName}`, // Customize as needed
+        }));
+        setDrivers(mappedDrivers);
+      } catch (err) {
+        console.error("Failed to fetch drivers from API: ", err);
+      }
+    };
+
+    const fetchTeams = async () => {
+      try {
+        const response = await TeamApi.get();
+        //setTeams(response.data);
+        const mappedTeams: ValueLabel[] = response.data.map((team: TeamResponse) => ({
+          value: team.teamCode, // or the unique identifier
+          label: `${team.name}`, // Customize as needed
+        }));
+        setTeams(mappedTeams);
+      } catch (err) {
+        console.error("Failed to fetch teams from API: ", err);
+      }
+    };
+    fetchDrivers();
+    fetchTeams();
+  }, []);
 
 
   // 1. Define your form.
@@ -55,40 +115,56 @@ function GrandPrixForm() {
     },
   })
 
+  type Paths = {
+    imageUrl: string;
+    trackImageUrl: string
+  }
+
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof gpSchema>) {
-    // Do something with the form values.
+  async function onSubmit(values: z.infer<typeof gpSchema>) {
     // ✅ This will be type-safe and validated.
-    console.log("POSTING: ", values)
+    console.log("POSTING: ", values);
 
-    if (values.fileUrl != null) {
-      axios.post('http://localhost:8084/api/upload', {
-        "file": values.fileUrl
-      }, {
-        headers: {
-          "Content-Type": "multipart/form-data", // Set multipart header
-        }
+    const paths: Paths = { imageUrl: "", trackImageUrl: "" };
 
-      }).then(function (response) {
-        console.log(response);
-        axios.post('http://localhost:8082/api/gp', {
-          ...values, fileUrl: response.data
-        }).then(function (response) {
-          console.log(response);
-        }).catch(function (error) {
-          console.log(error);
-        });
-      }).catch(function (error) {
-        console.log(error);
+    try {
+      const headers = { "Content-Type": "multipart/form-data" };
+
+      // Upload imageUrl
+      if (values.imageUrl) {
+        const fileResponse = await axios.post(
+          "http://localhost:8084/api/upload",
+          { file: values.imageUrl },
+          { headers }
+        );
+        paths.imageUrl = fileResponse.data;
+      }
+
+      // Upload trackImageUrl
+      if (values.trackImageUrl) {
+        const trackResponse = await axios.post(
+          "http://localhost:8084/api/upload",
+          { file: values.trackImageUrl },
+          { headers }
+        );
+        paths.trackImageUrl = trackResponse.data;
+      }
+
+      // Submit final GP data
+      const finalResponse = await axios.post("http://localhost:8082/api/gp", {
+        ...values,
+        imageUrl: paths.imageUrl,
+        trackImageUrl: paths.trackImageUrl,
       });
+
+      console.log("Final response:", finalResponse.data);
+    } catch (error) {
+      console.error("Error occurred:", error);
     }
-
-
   }
 
   return (
     <>
-      <DriverSelect />
       <div className="container mx-auto lg:w-2/3 bg-bg_accent p-8 rounded">
         <h1 className="text-4xl my-8 font-f1 font-bold text-center">Add a Grand Prix</h1>
         <Form {...form}>
@@ -100,7 +176,7 @@ function GrandPrixForm() {
                 <FormItem>
                   <FormControl>
                     <>
-                      <Label className="block text-left" htmlFor="gpName">Driver</Label>
+                      <Label className="block text-left" htmlFor="gpName">Name</Label>
                       <Input placeholder="Name of the Grand Prix" id="gpName" {...field} />
                     </>
                   </FormControl>
@@ -115,7 +191,7 @@ function GrandPrixForm() {
                 <FormItem>
                   <FormControl>
                     <>
-                      <Label className="block text-left" htmlFor="country">Driver</Label>
+                      <Label className="block text-left" htmlFor="country">Country</Label>
                       <Input placeholder="Country" id="country" {...field} />
                     </>
                   </FormControl>
@@ -130,7 +206,7 @@ function GrandPrixForm() {
                 <FormItem>
                   <FormControl>
                     <>
-                      <Label className="block text-left" htmlFor="city">Driver</Label>
+                      <Label className="block text-left" htmlFor="city">City</Label>
                       <Input placeholder="City" id="city" {...field} />
                     </>
                   </FormControl>
@@ -145,7 +221,7 @@ function GrandPrixForm() {
                 <FormItem>
                   <FormControl>
                     <>
-                      <Label className="block text-left" htmlFor="distance">Driver</Label>
+                      <Label className="block text-left" htmlFor="distance">Distance</Label>
                       <Input placeholder="Distance in meters" type="number" id="distance" {...field} />
                     </>
                   </FormControl>
@@ -160,7 +236,7 @@ function GrandPrixForm() {
                 <FormItem>
                   <FormControl>
                     <>
-                      <Label className="block text-left" htmlFor="laps">Driver</Label>
+                      <Label className="block text-left" htmlFor="laps">Laps</Label>
                       <Input placeholder="Laps in GP" type="number" id="laps" {...field} />
                     </>
                   </FormControl>
@@ -168,7 +244,27 @@ function GrandPrixForm() {
                 </FormItem>
               )}
             />
-            {/* TODO: dropdown  */}
+            <FormField
+              control={form.control}
+              name="raceDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <>
+                      <Label className="block text-left" htmlFor="dateInput">Date of race</Label>
+                      <Input
+                        type="date"
+                        id="dateInput"
+                        {...field}
+                        value={field.value ? field.value.toISOString().split("T")[0] : ""}
+                        onChange={(e) => field.onChange(new Date(e.target.value))}
+                      />
+                    </>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="winningTeamCode"
@@ -176,15 +272,18 @@ function GrandPrixForm() {
                 <FormItem>
                   <FormControl>
                     <>
-                      <Label className="block text-left" htmlFor="winningTeam">Driver</Label>
-                      <Input placeholder="Winning team code" id="winningTeam" {...field} />
+                      <Label className="block text-left" htmlFor="winningTeam">Winning team</Label>
+                      <ObjectSelect
+                        objectName="team"
+                        objects={teams}
+                        value={field.value}
+                        onChange={field.onChange} />
                     </>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {/* TODO: dropdown  */}
             <FormField
               control={form.control}
               name="winningDriverCode"
@@ -192,15 +291,20 @@ function GrandPrixForm() {
                 <FormItem>
                   <FormControl>
                     <>
-                      <Label className="block text-left" htmlFor="firstDriver">Driver</Label>
-                      <Input placeholder="Winning driver code" id="firstDriver" {...field} />
+                      <Label className="block text-left" htmlFor="firstDriver">Winner</Label>
+                      <ObjectSelect
+                        objectName="driver"
+                        objects={drivers}
+                        value={field.value}
+                        onChange={field.onChange} // Pass the onChange handler
+                      />
+
                     </>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {/* TODO: dropdown  */}
             <FormField
               control={form.control}
               name="secondDriverCode"
@@ -208,15 +312,19 @@ function GrandPrixForm() {
                 <FormItem>
                   <FormControl>
                     <>
-                      <Label className="block text-left" htmlFor="secondDriver">Driver</Label>
-                      <Input placeholder="Second place driver code" id="secondDriver" {...field} />
+                      <Label className="block text-left" htmlFor="secondDriver">Second place driver</Label>
+                      <ObjectSelect
+                        objectName="driver"
+                        objects={drivers}
+                        value={field.value}
+                        onChange={field.onChange} // Pass the onChange handler
+                      />
                     </>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {/* TODO: dropdown  */}
             <FormField
               control={form.control}
               name="thirdDriverCode"
@@ -224,8 +332,13 @@ function GrandPrixForm() {
                 <FormItem>
                   <FormControl>
                     <>
-                      <Label className="block text-left" htmlFor="thirdDriver">Driver</Label>
-                      <Input placeholder="Third place driver code" id="thirdDriver" {...field} />
+                      <Label className="block text-left" htmlFor="thirdDriver">Third place driver</Label>
+                      <ObjectSelect
+                        objectName="driver"
+                        objects={drivers}
+                        value={field.value}
+                        onChange={field.onChange} // Pass the onChange handler
+                      />
                     </>
                   </FormControl>
                   <FormMessage />
@@ -233,7 +346,7 @@ function GrandPrixForm() {
               )}
             />
             <FormField control={form.control}
-              name="fileUrl"
+              name="imageUrl"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -241,7 +354,30 @@ function GrandPrixForm() {
                       <Label className="block text-left" htmlFor="imageUpload">Image</Label>
                       <Input
                         id="fileUpload"
-                        name="fileUrl"
+                        name="imageUrl"
+                        type="file"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            field.onChange(e.target.files[0]); // Set the file in the form state
+                          }
+                        }}
+                      />
+                    </>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField control={form.control}
+              name="trackImageUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <>
+                      <Label className="block text-left" htmlFor="trackImageUpload">Track Image</Label>
+                      <Input
+                        id="trackImageUpload"
+                        name="trackImageUrl"
                         type="file"
                         onChange={(e) => {
                           if (e.target.files && e.target.files[0]) {

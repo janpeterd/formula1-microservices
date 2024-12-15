@@ -14,6 +14,7 @@ interface GpResponse {
   winningTeam: TeamResponse;
   raceDate: Date;
   imageUrl: string;
+  trackImageUrl: string;
 }
 
 export default GpResponse;

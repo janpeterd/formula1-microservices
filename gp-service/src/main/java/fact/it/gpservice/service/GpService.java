@@ -46,7 +46,8 @@ public class GpService {
                     .winningDriverCode("919e46b3-57d3-4775-b5a8-8dc5b2776d0c")
                     .secondDriverCode("c5709243-aadb-4c10-bafb-cdb8ed767790")
                     .thirdDriverCode("6baeb4c9-f7d1-4176-9854-f50ff290aae0")
-                    .imageUrl("/assets/test.png")
+                    .imageUrl("images/Belgium.avif")
+                    .trackImageUrl("images/Belgium_Circuit.png")
                     .build();
 
             Gp gp1 = Gp.builder()
@@ -61,7 +62,8 @@ public class GpService {
                     .winningDriverCode("c5709243-aadb-4c10-bafb-cdb8ed767790")
                     .secondDriverCode("919e46b3-57d3-4775-b5a8-8dc5b2776d0c")
                     .thirdDriverCode("6baeb4c9-f7d1-4176-9854-f50ff290aae0")
-                    .imageUrl("/assets/test.png")
+                    .imageUrl("images/Italy.jpg")
+                    .trackImageUrl("images/Italy_Circuit.avif")
                     .build();
 
             Gp gp2 = Gp.builder()
@@ -76,7 +78,8 @@ public class GpService {
                     .winningDriverCode("6baeb4c9-f7d1-4176-9854-f50ff290aae0")
                     .secondDriverCode("919e46b3-57d3-4775-b5a8-8dc5b2776d0c")
                     .thirdDriverCode("c5709243-aadb-4c10-bafb-cdb8ed767790")
-                    .imageUrl("/assets/test.png")
+                    .imageUrl("images/Monaco.jpg")
+                    .trackImageUrl("images/Monaco_Circuit.avif")
                     .build();
 
             gpRepository.save(gp);
@@ -91,6 +94,7 @@ public class GpService {
     }
 
     public void createGp(GpRequest gpRequest) {
+        System.out.println("GPREQUEST: " + gpRequest.toString());
         Gp gp = Gp.builder()
                 .gpCode(UUID.randomUUID().toString())
                 .name(gpRequest.getName())
@@ -99,11 +103,12 @@ public class GpService {
                 .city(gpRequest.getCity())
                 .raceDate(gpRequest.getRaceDate())
                 .laps(gpRequest.getLaps())
+                .winningTeamCode(gpRequest.getWinningTeamCode())
                 .winningDriverCode(gpRequest.getWinningDriverCode())
                 .secondDriverCode(gpRequest.getSecondDriverCode())
                 .thirdDriverCode(gpRequest.getThirdDriverCode())
-                .winningTeamCode(gpRequest.getWinningDriverCode())
                 .imageUrl(gpRequest.getImageUrl())
+                .trackImageUrl(gpRequest.getTrackImageUrl())
                 .build();
 
         gpRepository.save(gp);
@@ -143,6 +148,7 @@ public class GpService {
                 .secondDriver(getDriverByCode(gp.getSecondDriverCode()))
                 .thirdDriver(getDriverByCode(gp.getThirdDriverCode()))
                 .imageUrl(gp.getImageUrl())
+                .trackImageUrl(gp.getTrackImageUrl())
                 .build();
     }
 }

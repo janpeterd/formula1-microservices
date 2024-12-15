@@ -1,12 +1,19 @@
 package fact.it.gpservice.model;
 
-import jakarta.persistence.*;
-
 import java.time.LocalDate;
-import java.util.Date;
 
-import fact.it.gpservice.dto.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "gps")
@@ -32,4 +39,5 @@ public class Gp {
     private String secondDriverCode;
     private String thirdDriverCode;
     private String imageUrl;
+    private String trackImageUrl;
 }

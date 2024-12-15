@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom"
 import Logo from "../assets/logo.svg"
+import GoogleSignInButton from "./google-sign-in"
 function Navbar() {
   return (
     <div className="h-24 flex items-center justify-between p-4 border-b border-neutral-400 mb-8 bg-accent text-white font-f1">
@@ -9,11 +10,12 @@ function Navbar() {
         </div>
         <span className="font-bold text-3xl italic">Grand-Prix Microservices</span>
       </Link>
-      <ul className="flex gap-x-4">
-        <li><Link to="/grand-prix">View Grand Prix</Link></li>
-        <li><Link to="/grand-prix-add">Add Grand Prix</Link></li>
-        <li><Link to="/drivers">Driver Overview</Link></li>
-      </ul>
+      <div className="flex gap-x-4 justify-center items-center">
+        <Link to="/grand-prix">View Grand Prix</Link>
+        <Link to="/grand-prix-add">Add Grand Prix</Link>
+        <Link to="/drivers">Driver Overview</Link>
+        <GoogleSignInButton />
+      </div>
     </div >
   )
 
