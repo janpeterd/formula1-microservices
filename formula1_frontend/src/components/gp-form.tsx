@@ -13,13 +13,16 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import axios from "axios"
 import ObjectSelect from "./object-select"
 import { useEffect, useState } from "react"
 import DriverApi from "@/lib/driver_service"
 import DriverResponse from "@/dto/driverResponse"
 import TeamResponse from "@/dto/teamResponse"
 import TeamApi from "@/lib/team_service"
+import GpApi from "@/lib/gp_service"
+import GpRequest from "@/dto/gpRequest"
+import ImageApi from "@/lib/image_service"
+import { useNavigate } from "react-router-dom"
 
 const gpSchema = z.object({
   name: z.string().min(2).max(50),
@@ -68,9 +71,13 @@ type ValueLabel = {
   label: string;
 };
 
+type GrandPrixFormProps = {
+  initialValues?: Partial<z.infer<typeof gpSchema>>;
+  gpId?: string; // ID for updating the existing GP
+};
 
-function GrandPrixForm() {
-
+function GrandPrixForm({ initialValues, gpId: gpCode }: GrandPrixFormProps) {
+  const navigate = useNavigate();
   const [drivers, setDrivers] = useState<ValueLabel[]>([]);
   const [teams, setTeams] = useState<ValueLabel[]>([]);
 
@@ -107,13 +114,22 @@ function GrandPrixForm() {
   }, []);
 
 
-  // 1. Define your form.
   const form = useForm<z.infer<typeof gpSchema>>({
     resolver: zodResolver(gpSchema),
     defaultValues: {
       name: "",
+      country: "",
+      city: "",
+      distanceMeters: 1,
+      laps: 1,
+      raceDate: undefined,
+      winningTeamCode: "",
+      winningDriverCode: "",
+      secondDriverCode: "",
+      thirdDriverCode: "",
+      ...initialValues, // Use initial values for editing
     },
-  })
+  });
 
   type Paths = {
     imageUrl: string;
@@ -122,51 +138,50 @@ function GrandPrixForm() {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof gpSchema>) {
-    // ✅ This will be type-safe and validated.
-    console.log("POSTING: ", values);
-
+    console.log(gpCode ? "Updating..." : "Creating...", values);
     const paths: Paths = { imageUrl: "", trackImageUrl: "" };
 
     try {
-      const headers = { "Content-Type": "multipart/form-data" };
 
       // Upload imageUrl
       if (values.imageUrl) {
-        const fileResponse = await axios.post(
-          "http://localhost:8084/api/upload",
-          { file: values.imageUrl },
-          { headers }
-        );
+        const fileResponse = await ImageApi.post({ file: values.imageUrl });
         paths.imageUrl = fileResponse.data;
       }
 
       // Upload trackImageUrl
       if (values.trackImageUrl) {
-        const trackResponse = await axios.post(
-          "http://localhost:8084/api/upload",
-          { file: values.trackImageUrl },
-          { headers }
-        );
+        const trackResponse = await ImageApi.post({ file: values.trackImageUrl });
         paths.trackImageUrl = trackResponse.data;
       }
 
-      // Submit final GP data
-      const finalResponse = await axios.post("http://localhost:8082/api/gp", {
+      const payload: GpRequest = {
         ...values,
-        imageUrl: paths.imageUrl,
+        imageUrl: paths.imageUrl, // Use existing if not uploaded
         trackImageUrl: paths.trackImageUrl,
-      });
+      };
 
-      console.log("Final response:", finalResponse.data);
+      if (gpCode) {
+        // Update existing GP
+        await GpApi.put(gpCode, payload);
+        console.log("GP updated successfully.");
+      } else {
+        // Create new GP
+        await GpApi.post(payload);
+        console.log("GP created successfully.");
+      }
     } catch (error) {
       console.error("Error occurred:", error);
     }
+    navigate("/gp-admin");
   }
 
   return (
     <>
       <div className="container mx-auto lg:w-2/3 bg-bg_accent p-8 rounded">
-        <h1 className="text-4xl my-8 font-f1 font-bold text-center">Add a Grand Prix</h1>
+        <h1 className="text-4xl my-8 font-f1 font-bold text-center">
+          {gpCode ? "Edit Grand Prix" : "Add a Grand Prix"}
+        </h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -391,7 +406,9 @@ function GrandPrixForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="bg-accent font-f1 font-bold text-lg">Submit</Button>
+            <Button type="submit" className="bg-accent font-f1 font-bold text-lg">
+              {gpCode ? "Update" : "Submit"}
+            </Button>
           </form>
         </Form>
       </div>

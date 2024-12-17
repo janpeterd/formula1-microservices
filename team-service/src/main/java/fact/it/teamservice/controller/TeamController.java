@@ -22,7 +22,6 @@ public class TeamController {
         teamService.createTeam(teamRequest);
     }
 
-    @CrossOrigin
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<TeamResponse> getAllTeams() {

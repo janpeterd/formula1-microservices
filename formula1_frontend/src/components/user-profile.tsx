@@ -1,5 +1,5 @@
+import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 type UserProfileProps = {
@@ -21,6 +21,13 @@ function UserProfile({ image, onLogOut }: UserProfileProps) {
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={onLogOut}>Log Out</DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <Link to="/grand-prix-add">Add Grand Prix</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link to="/gp-admin">Manage Grand Prix</Link>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <div>

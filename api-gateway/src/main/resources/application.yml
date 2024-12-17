@@ -32,9 +32,37 @@ spring:
             - Method=GET
           filters:
             - SetPath=/api/driver
-        - id: team-service
+        - id: gp-service-all
+          uri: http://${GP_SERVICE_BASEURL:localhost:8082}
+          predicates:
+            - Path=/gps
+          filters:
+            - SetPath=/api/gp
+        - id: gp-service-add
+          uri: http://${GP_SERVICE_BASEURL:localhost:8082}
+          predicates:
+            - Path=/gps
+            - Method=POST
+          filters:
+            - SetPath=/api/gp
+        - id: team-service-all
           uri: http://${TEAM_SERVICE_BASEURL:localhost:8080}
           predicates:
             - Path=/teams
+            - Method=GET
           filters:
             - SetPath=/api/team
+        - id: get-image-service
+          uri: http://${TEAM_SERVICE_BASEURL:localhost:8084}
+          predicates:
+            - Path=/images/**
+            - Method=GET
+          filters:
+          - PreserveHostHeader
+        - id: post-image-service
+          uri: http://${TEAM_SERVICE_BASEURL:localhost:8084}
+          predicates:
+            - Path=/images
+            - Method=POST
+          filters:
+            - SetPath=/api/upload

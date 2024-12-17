@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 public class ImageUploadController {
     private final ImageUploadService imageUploadService;
 
-    @CrossOrigin
     @PostMapping
     public ResponseEntity<String> createGp(@RequestParam MultipartFile file) {
         try {

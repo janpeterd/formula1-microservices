@@ -6,6 +6,8 @@ interface DriverResponse {
   country: string;
   seasonPoints: number;
   imageUrl: string;
+
+  toString(): string;
 }
 
 export default DriverResponse;
