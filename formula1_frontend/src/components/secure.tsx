@@ -1,9 +1,10 @@
 import { isSignedInState } from "@/store";
 import { useRecoilValue } from "recoil";
 import GoogleSignInButton from "./google-sign-in";
+import { ReactNode } from "react";
 
 
-function Secure({ children }) {
+function Secure({ children }: { children: ReactNode }) {
   const isSignedIn = useRecoilValue(isSignedInState);
 
   if (!isSignedIn) {

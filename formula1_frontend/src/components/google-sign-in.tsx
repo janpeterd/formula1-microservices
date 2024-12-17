@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import UserProfile from "./user-profile";
@@ -8,6 +8,31 @@ import { isSignedInState } from "@/store";
 function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) {
   const [isSignedIn, setIsSignedIn] = useRecoilState(isSignedInState);
   const [decodedToken, setDecodedToken] = useState({});
+
+
+  // Stable googleLogout function
+  const googleLogout = useCallback(() => {
+    Cookies.remove("idToken");
+    setIsSignedIn(false);
+    document.getElementById(renderButtonElId)?.classList.remove("hidden");
+  }, [renderButtonElId, setIsSignedIn]);
+
+  // @ts-expect-error google callback response unknown type
+  const handleCallbackResponse = useCallback((response) => {
+    document.getElementById(renderButtonElId)?.classList.add("hidden");
+
+    const idToken = response.credential;
+    setIsSignedIn(true);
+    console.log("Encoded JWT ID Token:", idToken);
+
+    // Store the token in a secure cookie
+    Cookies.set("idToken", idToken, { expires: 1, secure: true, sameSite: "Strict" });
+
+    // Decode the token
+    const decoded = jwtDecode(idToken);
+    setDecodedToken(decoded);
+  }, [renderButtonElId, setIsSignedIn]);
+
 
   useEffect(() => {
     const idToken = Cookies.get("idToken");
@@ -38,30 +63,12 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
       document.getElementById(renderButtonElId),
       { size: "medium", shape: "pill", text: "signin" }
     );
-  }, [isSignedIn]);
-
-  function googleLogout() {
-    // clear cookie
-    Cookies.remove("idToken");
-    setIsSignedIn(false);
-    document.getElementById(renderButtonElId)?.classList.remove("hidden");
-  };
-
-
-  function handleCallbackResponse(response) {
-    document.getElementById(renderButtonElId)?.classList.add("hidden");
-
-    const idToken = response.credential;
-    setIsSignedIn(true);
-    console.log("Encoded JWT ID Token:", idToken);
-
-    // Store the token in a secure cookie
-    Cookies.set("idToken", idToken, { expires: 1, secure: true, sameSite: "Strict" }); // Expires in 1 day
-  }
+  }, [googleLogout, handleCallbackResponse, renderButtonElId, setIsSignedIn]);
 
   return (
     <div>
       {isSignedIn ?
+        // @ts-expect-error unknown decoded token type
         <UserProfile image={decodedToken.picture} onLogOut={googleLogout} />
         :
         <div id={renderButtonElId}></div>
