@@ -27,15 +27,17 @@ function Main() {
             </Secure>
           </div>
         } />
-        <Route path={"/grand-prix-add"} element={
-          <div className="container mx-auto mt-8">
-            <Secure>
-              <GrandPrixForm />
-            </Secure>
-          </div>
-        } />
+        <Route
+          path="/grand-prix-add/:gpCode?"
+          element={
+            <div className="container mx-auto mt-8">
+              <Secure>
+                <GrandPrixForm />
+              </Secure>
+            </div>
+          }
+        />
       </Routes>
-
     </div>
   )
 }

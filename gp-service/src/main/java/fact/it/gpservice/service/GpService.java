@@ -2,9 +2,11 @@ package fact.it.gpservice.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -93,8 +95,29 @@ public class GpService {
         return gps.stream().map(this::mapToGpResponse).toList();
     }
 
+    public GpResponse updateGp(String gpCode, GpRequest gpRequest) {
+        Optional<Gp> gp = gpRepository.findGpByGpCode(gpCode);
+        if (gp.isPresent()) {
+            Gp gp_value = gp.get();
+            gp_value.setName(gpRequest.getName());
+            gp_value.setDistanceMeters(gpRequest.getDistanceMeters());
+            gp_value.setCountry(gpRequest.getCountry());
+            gp_value.setCity(gpRequest.getCity());
+            gp_value.setRaceDate(gpRequest.getRaceDate());
+            gp_value.setLaps(gpRequest.getLaps());
+            gp_value.setWinningTeamCode(gpRequest.getWinningTeamCode());
+            gp_value.setWinningDriverCode(gpRequest.getWinningDriverCode());
+            gp_value.setSecondDriverCode(gpRequest.getSecondDriverCode());
+            gp_value.setThirdDriverCode(gpRequest.getThirdDriverCode());
+            gp_value.setImageUrl(gpRequest.getImageUrl());
+            gp_value.setTrackImageUrl(gpRequest.getTrackImageUrl());
+            return mapToGpResponse(gp_value);
+        } else {
+            throw new IllegalArgumentException("GP with code " + gpCode + " does not exist.");
+        }
+    }
+
     public void createGp(GpRequest gpRequest) {
-        System.out.println("GPREQUEST: " + gpRequest.toString());
         Gp gp = Gp.builder()
                 .gpCode(UUID.randomUUID().toString())
                 .name(gpRequest.getName())
@@ -151,4 +174,17 @@ public class GpService {
                 .trackImageUrl(gp.getTrackImageUrl())
                 .build();
     }
+
+    public void deleteGp(String gpCode) {
+        if (!gpRepository.existsByGpCode(gpCode)) {
+            throw new IllegalArgumentException("GP with code " + gpCode + " does not exist.");
+        }
+        gpRepository.deleteByGpCode(gpCode);
+    }
+
+    public GpResponse getGp(String gpCode) {
+        Optional<Gp> gp = gpRepository.findGpByGpCode(gpCode);
+        return gp.map(this::mapToGpResponse).orElse(null);
+    }
+
 }

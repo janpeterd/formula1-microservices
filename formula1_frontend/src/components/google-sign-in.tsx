@@ -4,16 +4,22 @@ import Cookies from "js-cookie";
 import UserProfile from "./user-profile";
 import { useRecoilState } from "recoil";
 import { isSignedInState } from "@/store";
+import { useToast } from "@/hooks/use-toast";
 
 function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) {
   const [isSignedIn, setIsSignedIn] = useRecoilState(isSignedInState);
   const [decodedToken, setDecodedToken] = useState({});
-
+  const { toast } = useToast();
 
   // Stable googleLogout function
   const googleLogout = useCallback(() => {
     Cookies.remove("idToken");
     setIsSignedIn(false);
+
+    toast({
+      title: "Succesfully logged out",
+      description: `You are now logged out.`,
+    })
     document.getElementById(renderButtonElId)?.classList.remove("hidden");
   }, [renderButtonElId, setIsSignedIn]);
 
@@ -30,7 +36,12 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
 
     // Decode the token
     const decoded = jwtDecode(idToken);
+
     setDecodedToken(decoded);
+    toast({
+      title: "Succesfully logged in",
+      description: `You are now logged in as: ${decoded.name} (${decoded.email})`,
+    })
   }, [renderButtonElId, setIsSignedIn]);
 
 
@@ -45,6 +56,7 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
           googleLogout();
         } else {
           setIsSignedIn(true);
+          console.log("Encoded JWT ID Token:", idToken);
         }
       }
 

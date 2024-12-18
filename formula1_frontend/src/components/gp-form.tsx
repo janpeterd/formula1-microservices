@@ -22,14 +22,21 @@ import TeamApi from "@/lib/team_service"
 import GpApi from "@/lib/gp_service"
 import GpRequest from "@/dto/gpRequest"
 import ImageApi from "@/lib/image_service"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
+import { useToast } from "@/hooks/use-toast"
+import { API_URL, fileObjectToDataUrl, urlToFile } from "@/lib/utils"
 
+const validTypes = ['jpeg', 'png', 'webp', 'avif', 'jpg'];
 const gpSchema = z.object({
   name: z.string().min(2).max(50),
   country: z.string().min(2).max(50),
   city: z.string().min(2).max(50),
-  distanceMeters: z.string().transform((val) => Number(val)).pipe(z.number().positive()),
-  laps: z.string().transform((val) => Number(val)).pipe(z.number().positive()),
+  distanceMeters: z.union([z.string(), z.number()]) // Allow either a string or a number
+    .transform((val) => typeof val === 'string' ? Number(val) : val) // Only transform if it's a string
+    .pipe(z.number().positive()),
+  laps: z.union([z.string(), z.number()]) // Allow either a string or a number
+    .transform((val) => typeof val === 'string' ? Number(val) : val) // Only transform if it's a string
+    .pipe(z.number().positive()),
   raceDate: z.date(),
   winningTeamCode: z.string().length(36),
   winningDriverCode: z.string().length(36),
@@ -44,74 +51,131 @@ const gpSchema = z.object({
     .refine(
       (file) => {
         if (!file) return false;
-        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        return validTypes.includes(file.type);
+
+        // Extract file extension (case-insensitive)
+        const fileExtension = file.name.split('.').pop()?.toLowerCase();
+
+        // Check if the file extension is in the valid types list
+        return fileExtension && validTypes.includes(fileExtension);
       },
-      "Please upload a JPG, PNG, or WEBP image"
+      "Please upload a JPG, PNG, AVIF or WEBP image"
     ),
   trackImageUrl: z
     .instanceof(File)
     .refine(
-      (file) => file && file.size <= 35 * 1024 * 1024,
-      "File size should be 35MB or less"
+      (file) => file && file.size <= 5 * 1024 * 1024,
+      "File size should be 5MB or less"
     )
     .refine(
       (file) => {
         if (!file) return false;
-        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        return validTypes.includes(file.type);
-      },
-      "Please upload a JPG, PNG, or WEBP image"
-    )
-})
 
+        // Extract file extension (case-insensitive)
+        const fileExtension = file.name.split('.').pop()?.toLowerCase();
+
+        // Check if the file extension is in the valid types list
+        return fileExtension && validTypes.includes(fileExtension);
+      },
+      "Please upload a JPG, PNG, AVIF or WEBP image"
+    ),
+})
 
 type ValueLabel = {
   value: string;
   label: string;
 };
 
-type GrandPrixFormProps = {
-  initialValues?: Partial<z.infer<typeof gpSchema>>;
-  gpId?: string; // ID for updating the existing GP
-};
+type GpFormRequest = {
+  name: string;
+  country: string;
+  city: string;
+  distanceMeters: number;
+  laps: number;
+  winningDriverCode: string;
+  secondDriverCode: string;
+  thirdDriverCode: string;
+  winningTeamCode: string;
+  raceDate: Date;
+  imageUrl: File;
+  trackImageUrl: File;
+}
 
-function GrandPrixForm({ initialValues, gpId: gpCode }: GrandPrixFormProps) {
+function GrandPrixForm() {
+  const { gpCode: gpCode } = useParams();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [drivers, setDrivers] = useState<ValueLabel[]>([]);
   const [teams, setTeams] = useState<ValueLabel[]>([]);
+  const [initialValues, setInitialValues] = useState<Partial<GpFormRequest>>({});
+  const [imageSrc, setImageSrc] = useState<string>("");
+  const [trackImageSrc, setTrackImageSrc] = useState<string>("");
+  const [hasUploadedImages, setHasUploadedImages] = useState(false);
 
   useEffect(() => {
-    const fetchDrivers = async () => {
-      try {
-        const response = await DriverApi.get();
-        //setDrivers(response.data);
-        const mappedDrivers: ValueLabel[] = response.data.map((driver: DriverResponse) => ({
-          value: driver.driverCode, // or the unique identifier
-          label: `${driver.firstName} ${driver.lastName}`, // Customize as needed
-        }));
-        setDrivers(mappedDrivers);
-      } catch (err) {
-        console.error("Failed to fetch drivers from API: ", err);
+    const fetchGpData = async () => {
+      if (gpCode && !hasUploadedImages) {
+        const response = await GpApi.getByCode(gpCode);
+        setImageSrc(`${API_URL}/${response.data.imageUrl}`);
+        setTrackImageSrc(`${API_URL}/${response.data.trackImageUrl}`);
+        const imageData = await urlToFile(`${API_URL}/${response.data.imageUrl}`);
+        const trackImageData = await urlToFile(`${API_URL}/${response.data.trackImageUrl}`);
+
+        setInitialValues(
+          {
+            ...response.data,
+            imageUrl: imageData,
+            trackImageUrl: trackImageData,
+            winningDriverCode: response.data.winningDriver.driverCode,
+            secondDriverCode: response.data.secondDriver.driverCode,
+            thirdDriverCode: response.data.thirdDriver.driverCode,
+            winningTeamCode: response.data.winningTeam.teamCode,
+          }
+        );
+
       }
     };
 
-    const fetchTeams = async () => {
+    const fetchOptions = async () => {
       try {
-        const response = await TeamApi.get();
-        //setTeams(response.data);
-        const mappedTeams: ValueLabel[] = response.data.map((team: TeamResponse) => ({
-          value: team.teamCode, // or the unique identifier
-          label: `${team.name}`, // Customize as needed
-        }));
-        setTeams(mappedTeams);
+        const [driverResponse, teamResponse] = await Promise.all([
+          DriverApi.get(),
+          TeamApi.get(),
+        ]);
+
+        setDrivers(
+          driverResponse.data.map((driver: DriverResponse) => ({
+            value: driver.driverCode,
+            label: `${driver.firstName} ${driver.lastName}`,
+          }))
+        );
+
+        setTeams(
+          teamResponse.data.map((team: TeamResponse) => ({
+            value: team.teamCode,
+            label: team.name,
+          }))
+        );
       } catch (err) {
-        console.error("Failed to fetch teams from API: ", err);
+        console.error("Failed to fetch data: ", err);
       }
     };
-    fetchDrivers();
-    fetchTeams();
-  }, []);
+
+    fetchGpData();
+    fetchOptions();
+  }, [gpCode, hasUploadedImages]);
+
+
+  const handleImageUpload = (file: File, isTrack: boolean) => {
+    setHasUploadedImages(true); // Mark images as uploaded
+    fileObjectToDataUrl(file).then((result) => {
+      if (isTrack) {
+        setTrackImageSrc(result);
+      } else {
+        setImageSrc(result);
+      }
+    })
+  };
+
 
 
   const form = useForm<z.infer<typeof gpSchema>>({
@@ -127,9 +191,29 @@ function GrandPrixForm({ initialValues, gpId: gpCode }: GrandPrixFormProps) {
       winningDriverCode: "",
       secondDriverCode: "",
       thirdDriverCode: "",
-      ...initialValues, // Use initial values for editing
     },
   });
+
+  if (gpCode && initialValues && !hasUploadedImages) {
+    const raceDate = initialValues.raceDate ? new Date(initialValues.raceDate) : new Date();
+    form.setValue("name", initialValues.name as string);
+    form.setValue("country", initialValues.country as string);
+    form.setValue("city", initialValues.city as string);
+    form.setValue("distanceMeters", initialValues.distanceMeters as number);
+    form.setValue("laps", initialValues.laps as number);
+    form.setValue("winningDriverCode", initialValues.winningDriverCode as string);
+    form.setValue("secondDriverCode", initialValues.secondDriverCode as string);
+    form.setValue("thirdDriverCode", initialValues.thirdDriverCode as string);
+    form.setValue("winningTeamCode", initialValues.winningTeamCode as string);
+    form.setValue("raceDate", raceDate);
+    if (initialValues.imageUrl) {
+      form.setValue("imageUrl", initialValues.imageUrl);
+    }
+
+    if (initialValues.trackImageUrl) {
+      form.setValue("trackImageUrl", initialValues.trackImageUrl);
+    }
+  }
 
   type Paths = {
     imageUrl: string;
@@ -138,21 +222,41 @@ function GrandPrixForm({ initialValues, gpId: gpCode }: GrandPrixFormProps) {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof gpSchema>) {
+
     console.log(gpCode ? "Updating..." : "Creating...", values);
     const paths: Paths = { imageUrl: "", trackImageUrl: "" };
+    // Upload imageUrl
+    if (values.imageUrl && values.trackImageUrl) {
+      const imageReponse = await ImageApi.post({ file: values.imageUrl });
+      toast({
+        title: "Uploaded image",
+        description: (
+          <div className="flex gap-x-2 justify-center items-center">
+            <img src={`${API_URL}/${imageReponse.data}`} alt="uploaded image" className="w-20 h-20 object-cover rounded-lg" />
+            <p className="leading-7 [&:not(:first-child)]:mt-6">Succesfully uploaded Grand Prix Image</p>
+          </div >
+        ),
+      })
+      paths.imageUrl = imageReponse.data;
 
-    try {
-
-      // Upload imageUrl
-      if (values.imageUrl) {
-        const fileResponse = await ImageApi.post({ file: values.imageUrl });
-        paths.imageUrl = fileResponse.data;
-      }
-
-      // Upload trackImageUrl
-      if (values.trackImageUrl) {
+      try {
         const trackResponse = await ImageApi.post({ file: values.trackImageUrl });
+        toast({
+          title: "Uploaded track image",
+          description: (
+            <div className="flex gap-x-2 justify-center items-center">
+              <img src={`${API_URL}/${trackResponse.data}`} alt="uploaded image" className="w-20 h-20 object-cover rounded-lg" />
+              <p className="leading-7 [&:not(:first-child)]:mt-6">Succesfully uploaded Grand Prix Track Image</p>
+            </div >
+          ),
+        });
         paths.trackImageUrl = trackResponse.data;
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error uploading track image",
+          description: `Something went wrong when trying to upload the track image. ${error.message}`,
+        })
       }
 
       const payload: GpRequest = {
@@ -160,20 +264,44 @@ function GrandPrixForm({ initialValues, gpId: gpCode }: GrandPrixFormProps) {
         imageUrl: paths.imageUrl, // Use existing if not uploaded
         trackImageUrl: paths.trackImageUrl,
       };
+      console.log("payload", payload)
 
       if (gpCode) {
         // Update existing GP
-        await GpApi.put(gpCode, payload);
-        console.log("GP updated successfully.");
+        try {
+          await GpApi.put(gpCode, payload);
+          toast({
+            title: "Grand Prix updated",
+            description: `Succesfully updated Grand Prix ${payload.name} - ${payload.country}.`,
+          })
+          console.log("GP updated successfully.");
+        } catch (error: any) {
+          toast({
+            variant: "destructive",
+            title: "Error updating Grand Prix",
+            description: `Something went wrong when trying to update the Grand Prix. ${error.message}`,
+          })
+        }
       } else {
         // Create new GP
-        await GpApi.post(payload);
-        console.log("GP created successfully.");
+        try {
+          await GpApi.post(payload);
+          console.log("GP created successfully.");
+          toast({
+            title: "Grand Prix created",
+            description: `Succesfully created Grand Prix ${payload.name} - ${payload.country}.`,
+          })
+        } catch (error) {
+          console.error("Error occurred:", error);
+          toast({
+            variant: "destructive",
+            title: "Error creating new Grand Prix",
+            description: `Something went wrong when trying to create Grand Prix.`,
+          })
+        }
       }
-    } catch (error) {
-      console.error("Error occurred:", error);
+      navigate("/gp-admin");
     }
-    navigate("/gp-admin");
   }
 
   return (
@@ -271,7 +399,7 @@ function GrandPrixForm({ initialValues, gpId: gpCode }: GrandPrixFormProps) {
                         type="date"
                         id="dateInput"
                         {...field}
-                        value={field.value ? field.value.toISOString().split("T")[0] : ""}
+                        value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""}
                         onChange={(e) => field.onChange(new Date(e.target.value))}
                       />
                     </>
@@ -283,22 +411,23 @@ function GrandPrixForm({ initialValues, gpId: gpCode }: GrandPrixFormProps) {
             <FormField
               control={form.control}
               name="winningTeamCode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <>
-                      <Label className="block text-left" htmlFor="winningTeam">Winning team</Label>
-                      <ObjectSelect
-                        objectName="team"
-                        objects={teams}
-                        value={field.value}
-                        onChange={field.onChange} />
-                    </>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              render={({ field }) => {
+                return (
+                  <FormItem>
+                    <FormControl>
+                      <>
+                        <Label className="block text-left" htmlFor="winningTeam">Winning team</Label>
+                        <ObjectSelect
+                          objectName="team"
+                          objects={teams}
+                          value={field.value}
+                          onChange={field.onChange} />
+                      </>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )
+              }} />
             <FormField
               control={form.control}
               name="winningDriverCode"
@@ -367,6 +496,7 @@ function GrandPrixForm({ initialValues, gpId: gpCode }: GrandPrixFormProps) {
                   <FormControl>
                     <>
                       <Label className="block text-left" htmlFor="imageUpload">Image</Label>
+                      <img src={imageSrc} alt="field" className="rounded-lg max-w-36 max-h-36 ml-1" />
                       <Input
                         id="fileUpload"
                         name="imageUrl"
@@ -390,13 +520,15 @@ function GrandPrixForm({ initialValues, gpId: gpCode }: GrandPrixFormProps) {
                   <FormControl>
                     <>
                       <Label className="block text-left" htmlFor="trackImageUpload">Track Image</Label>
+                      <img src={trackImageSrc} alt="field" className="rounded-lg max-w-36 max-h-36 ml-1" />
                       <Input
                         id="trackImageUpload"
                         name="trackImageUrl"
                         type="file"
                         onChange={(e) => {
                           if (e.target.files && e.target.files[0]) {
-                            field.onChange(e.target.files[0]); // Set the file in the form state
+                            field.onChange(e.target.files[0]);
+                            handleImageUpload(e.target.files[0], true);
                           }
                         }}
                       />
@@ -417,4 +549,4 @@ function GrandPrixForm({ initialValues, gpId: gpCode }: GrandPrixFormProps) {
 }
 
 
-export default GrandPrixForm
+export default GrandPrixForm;

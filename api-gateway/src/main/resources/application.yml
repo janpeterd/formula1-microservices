@@ -25,41 +25,61 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: driver-service-all
+        - id: driver-service-get-all
           uri: http://${DRIVER_SERVICE_BASEURL:localhost:8081}
           predicates:
             - Path=/drivers
             - Method=GET
           filters:
             - SetPath=/api/driver
-        - id: gp-service-all
+        - id: gp-service-get-all
           uri: http://${GP_SERVICE_BASEURL:localhost:8082}
           predicates:
             - Path=/gps
           filters:
             - SetPath=/api/gp
-        - id: gp-service-add
+        - id: gp-service-get-by-code
+          uri: http://${GP_SERVICE_BASEURL:localhost:8082}
+          predicates:
+            - Path=/gp/{gpCode}
+          filters:
+            - SetPath=/api/gp/{gpCode}
+        - id: gp-service-post
           uri: http://${GP_SERVICE_BASEURL:localhost:8082}
           predicates:
             - Path=/gps
             - Method=POST
           filters:
             - SetPath=/api/gp
-        - id: team-service-all
+        - id: gp-service-put
+          uri: http://${GP_SERVICE_BASEURL:localhost:8082}
+          predicates:
+            - Path=/gps/{gpCode}
+            - Method=PUT
+          filters:
+            - SetPath=/api/gp/{gpCode}
+        - id: gp-service-delete
+          uri: http://${GP_SERVICE_BASEURL:localhost:8082}
+          predicates:
+            - Path=/gps/{gpCode}
+            - Method=DELETE
+          filters:
+            - SetPath=/api/gp/{gpCode}
+        - id: team-service-get-all
           uri: http://${TEAM_SERVICE_BASEURL:localhost:8080}
           predicates:
             - Path=/teams
             - Method=GET
           filters:
             - SetPath=/api/team
-        - id: get-image-service
+        - id: get-image-service-get-all
           uri: http://${TEAM_SERVICE_BASEURL:localhost:8084}
           predicates:
             - Path=/images/**
             - Method=GET
           filters:
           - PreserveHostHeader
-        - id: post-image-service
+        - id: image-service-post
           uri: http://${TEAM_SERVICE_BASEURL:localhost:8084}
           predicates:
             - Path=/images

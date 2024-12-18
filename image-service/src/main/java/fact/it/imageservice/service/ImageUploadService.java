@@ -25,9 +25,7 @@ public class ImageUploadService {
 
         System.out.println("File Content Type: " + file.getContentType());
         ArrayList<String> allowedTypes = new ArrayList<String>(
-                List.of("image/jpeg", "image/png", "image/webp")
-
-        );
+                List.of("image/jpeg", "image/png", "image/webp", "image/octet-stream"));
 
         if (allowedTypes.contains(file.getContentType())) {
 

@@ -1,27 +1,29 @@
 "use client"
 
-import { Trash, Pencil } from "lucide-react"
+import { Pencil } from "lucide-react"
 import GpResponse from "@/dto/gpResponse"
 import { ColumnDef } from "@tanstack/react-table"
 import { DataTableColumnHeader } from "./colum-headers"
 import { Button } from "../ui/button"
-
+import DeleteButton from "./delete-button"
 export const columns: ColumnDef<GpResponse>[] = [
   {
     id: "edit",
     header: () => (
       <div className="text-center">Actions</div>
     ),
-    cell: () => (
-      <div className="flex flex-col justify-center items-center gap-y-0.5">
-        <Button className="bg-dark px-3 py-1">
-          <Pencil />
-        </Button >
-        <Button className="bg-accent px-3 py-1">
-          <Trash />
-        </Button >
-      </div>
-    )
+    cell: ({ row, table }) => {
+      const gpCode = row.original.gpCode; // Ensure `gpCode` is accessible in your data
+
+      return (
+        <div className="flex flex-col justify-center items-center gap-y-0.5">
+          <Button onClick={() => table.options.meta?.navigate(`/grand-prix-add/${row.original.gpCode}`)} className="bg-dark px-3 py-1">
+            <Pencil />
+          </Button>
+          <DeleteButton gpCode={gpCode} row={row} table={table} />
+        </div>
+      );
+    },
   },
   {
     id: "name",
