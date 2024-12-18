@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class DriverService {
     private final DriverRepository driverRepository;
-    // private final WebClient webClient;
 
     @PostConstruct
     public void loadData() {
@@ -70,7 +69,7 @@ public class DriverService {
         }
     }
 
-    private DriverResponse mapToDriverResponse(Driver driver) {
+    public DriverResponse mapToDriverResponse(Driver driver) {
         return DriverResponse.builder()
                 .driverCode(driver.getDriverCode())
                 .firstName(driver.getFirstName())
