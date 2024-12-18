@@ -1,16 +1,5 @@
 package fact.it.gpservice.service;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
-
 import fact.it.gpservice.dto.DriverResponse;
 import fact.it.gpservice.dto.GpRequest;
 import fact.it.gpservice.dto.GpResponse;
@@ -19,6 +8,15 @@ import fact.it.gpservice.model.Gp;
 import fact.it.gpservice.repository.GpRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +35,7 @@ public class GpService {
 
         if (gpRepository.count() <= 0) {
             Gp gp = Gp.builder()
-                    .gpCode(UUID.randomUUID().toString())
+                    .gpCode("a0471956-f215-4273-b428-3f52ac382ad2")
                     .name("Circuit de Spa-Francorchamps")
                     .country("Belgium")
                     .city("Stavelot")
@@ -53,7 +51,7 @@ public class GpService {
                     .build();
 
             Gp gp1 = Gp.builder()
-                    .gpCode(UUID.randomUUID().toString())
+                    .gpCode("03dfb751-0f69-4a34-85b5-c2bc52d3e0b7")
                     .name("Autodromo Nazionale Monza")
                     .country("Italy")
                     .city("Monza")
@@ -69,7 +67,7 @@ public class GpService {
                     .build();
 
             Gp gp2 = Gp.builder()
-                    .gpCode(UUID.randomUUID().toString())
+                    .gpCode("435e387d-9851-4b2c-8273-be7c513a417f")
                     .name("Circuit de Monaco")
                     .country("Monaco")
                     .city("Monte Carlo")
@@ -157,7 +155,7 @@ public class GpService {
 
     }
 
-    private GpResponse mapToGpResponse(Gp gp) {
+    public GpResponse mapToGpResponse(Gp gp) {
         return GpResponse.builder()
                 .gpCode(gp.getGpCode())
                 .name(gp.getName())
@@ -183,8 +181,13 @@ public class GpService {
     }
 
     public GpResponse getGp(String gpCode) {
+        System.out.println("finding by gpCode: " + gpCode);
         Optional<Gp> gp = gpRepository.findGpByGpCode(gpCode);
-        return gp.map(this::mapToGpResponse).orElse(null);
+        if (gp.isPresent()) {
+            return mapToGpResponse(gp.get());
+        } else {
+            throw new IllegalArgumentException("GP with code " + gpCode + " does not exist.");
+        }
     }
 
 }

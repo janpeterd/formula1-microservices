@@ -28,7 +28,6 @@ public class TeamController {
         return teamService.getAllTeams();
     }
 
-    @CrossOrigin
     @GetMapping("/{teamCode}")
     public ResponseEntity<TeamResponse> getTeamByTeamCode(@PathVariable String teamCode) {
         TeamResponse team = teamService.getTeamByTeamCode(teamCode);

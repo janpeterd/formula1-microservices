@@ -19,5 +19,4 @@ public class DriverResponse {
     private String teamCode;
     private Integer seasonPoints;
     private String imageUrl;
-    private String logoUrl;
 }
