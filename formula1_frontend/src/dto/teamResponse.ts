@@ -5,6 +5,8 @@ interface TeamResponse {
   name: string;
   points: number;
   drivers: [DriverResponse];
+  imageUrl: string;
+  logoUrl: string;
 }
 
 export default TeamResponse;

@@ -17,4 +17,5 @@ public class TeamResponse {
     private Integer points;
     private List<DriverResponse> drivers;
     private String imageUrl;
+    private String logoUrl;
 }

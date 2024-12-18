@@ -33,14 +33,16 @@ public class TeamService {
                     .teamCode("e600a035-1f38-4319-99d2-01607db9c980")
                     .name("Mercedes")
                     .points(10)
-                    .imageUrl("images/mercedes.avif")
+                    .imageUrl("images/mercedes_car.avif")
+                    .logoUrl("images/mercedes.avif")
                     .build();
 
             Team team1 = Team.builder()
                     .teamCode("ac879010-39cd-4562-badf-732664ea68c3")
                     .name("Red Bull Racing")
                     .points(20)
-                    .imageUrl("images/red bull.avif")
+                    .imageUrl("images/red-bull-racing_car.avif")
+                    .logoUrl("images/red_bull.avif")
                     .build();
 
             teamRepository.save(team);
@@ -68,6 +70,7 @@ public class TeamService {
                 .name(team.getName())
                 .points(team.getPoints())
                 .imageUrl(team.getImageUrl())
+                .logoUrl(team.getLogoUrl())
                 .drivers(drivers)
                 .build();
         return response;
@@ -78,6 +81,7 @@ public class TeamService {
                 .name(teamRequest.getName())
                 .points(teamRequest.getPoints())
                 .imageUrl(teamRequest.getImageUrl())
+                .logoUrl(teamRequest.getLogoUrl())
                 .build();
 
         teamRepository.save(team);

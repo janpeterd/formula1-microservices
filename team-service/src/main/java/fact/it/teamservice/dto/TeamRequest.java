@@ -16,4 +16,5 @@ public class TeamRequest {
     private Integer points;
     private List<String> driverCodes;
     private String imageUrl;
+    private String logoUrl;
 }

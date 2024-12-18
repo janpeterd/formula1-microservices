@@ -18,4 +18,5 @@ public class Team {
     private String name;
     private Integer points;
     private String imageUrl;
+    private String logoUrl;
 }
