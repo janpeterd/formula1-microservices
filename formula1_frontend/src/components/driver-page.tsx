@@ -21,7 +21,7 @@ function DriverPage() {
 
 
   return (
-    <div>
+    <div className="my-12">
       <h1 className="font-f1 text-4xl my-4 font-bold text-center">F1 Drivers</h1>
       <hr className="w-full my-12" />
       <div className="flex flex-wrap justify-center items-center gap-8">

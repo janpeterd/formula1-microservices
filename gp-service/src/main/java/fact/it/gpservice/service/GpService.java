@@ -140,7 +140,7 @@ public class GpService {
     // helper function
     private TeamResponse getTeamByCode(String teamCode) {
         return webClient.get()
-                .uri("http://" + teamServiceBaseUrl + "/api/team/by-id/" + teamCode)
+                .uri("http://" + teamServiceBaseUrl + "/api/team/" + teamCode)
                 .retrieve()
                 .bodyToMono(TeamResponse.class)
                 .block();
@@ -150,7 +150,7 @@ public class GpService {
     private DriverResponse getDriverByCode(String driverCode) {
 
         return webClient.get()
-                .uri("http://" + driverServiceBaseUrl + "/api/driver/by-id/" + driverCode)
+                .uri("http://" + driverServiceBaseUrl + "/api/driver/" + driverCode)
                 .retrieve()
                 .bodyToMono(DriverResponse.class)
                 .block();

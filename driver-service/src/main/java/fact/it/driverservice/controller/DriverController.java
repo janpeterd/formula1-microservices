@@ -38,7 +38,7 @@ public class DriverController {
         return driverService.getAllDrivers();
     }
 
-    @GetMapping("/by-id/{driverCode}")
+    @GetMapping("/{driverCode}")
     public ResponseEntity<DriverResponse> getDriverByDriverCode(@PathVariable String driverCode) {
         DriverResponse driver = driverService.getDriverByDriverCode(driverCode);
         if (driver != null) {
