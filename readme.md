@@ -1,78 +1,124 @@
-# Project Advanced Programming Topics
+# Formula 1 Microservices
 
-## 1. ❔ **ALGEMENE EISEN & DOCUMENTATIE** (alles samen _+60%_ op Project)
-
-- Basics:
-
-  - Minstens 3 GET, 1 POST, 1 PUT en 1 DELETE endpoints op een API Gateway, gebaseerd op je eigen services
-  - Minstens minstens 1 keer MongoDB als databank en minstens 1 keer SQL
-  - Logisch gebruik van path parameters, query parameters en body
+![Frontend GP page](./images/frontend_gp_page.png)
 
 - Documentatie:
 
   - Beschrijving van het gekozen thema, je microservices en andere componenten zoals gateways in lijst en schema, en je uitbreidingen + link naar de zaken die hosted zijn op GitHub README.md
   - Aantoonbare werking van alle endpoints door screenshots van Postman requests op GitHub README.md
 
-- Deployment:
+## Thema
 
-  - Docker container voor de componenten, welke automatisch door GitHub Actions opgebouwd wordt
-  - Deployment van de container(s) via Docker Compose
+Ik heb gekozen om een microservices project te maken rond Formule 1. Hiervoor
+heb ik 3 services gemaakt. De eerste service bevat **'Drivers'** (chauffeurs),
+de tweede bevat **Teams** en de laatste **Grand Prix**. Ik heb voor deze
+entiteiten gekozen, omdat er hiervoor wel wat interactie nodig is tussen de
+verschillende services (team heeft drivers nodig, GP (Grand Prix) heeft zowel
+teams en drivers nodig, etc.), wat het interessant en leerrijk maakte voor dit
+project.
 
-- Security:
+Bepaalde endpoints van deze services kunnen bereikt worden via de
+**gateway-service**. Deze gateway bevat ook een implementatie van OAuth2 met
+Google Account.
 
-  - Auth op Gateway via GCP OAuth2, met secured/unsecured endpoints
+Ik wou ook voor elke service wat foto's opslaat (om een mooiere frontend te
+maken), maar ik besefte dat het in een microservices-applicatie niet echt het
+plan is om in elke service foto's op te slaan. In de realiteit zal er een
+andere centrale service (zoals _S3-buckets_) gebruikt worden om media in op te
+slaan, maar aangezien ik hier geen toegang tot had heb ik besloten om dit
+gedrag wel te centraliseren in een service die noemt **image-service**. In deze
+service staan alle foto's opgeslagen en de frontend gebruikt deze om foto's op
+te halen.
 
-- Testing:
-  - Unit testing all the Service classes
+Zoals hierboven al kort vermeld heb ik ook **frontend** gemaakt. Deze heb ik
+gemaakt met behulp van **React**. Op deze frontend wordt heel wat gegevens uit
+de services weergegeven en kan iemand met login toegang ook Grand Prix aanmaken
+via een formulier. Om dit klaar te krijgen was natuurlijk ook Google
+OAuth2-login nodig op de frontend.
 
-## 2. 🔧 SUGGESTIES VOOR AANVULLINGEN: FUNCTIE
+Alle services kunnen zeer makkelijk gedeployed worden, door middel van
+_docker_. Er is ook een _docker-compose_-bestand dat alle services samen
+opstart.
 
-- Maak een front-end voor je applicatie (ook in container). (+15%)
-- Zet de deployment docker-compose.yml om naar Kubernetes Manifest .yml-files (+5%)
-- Zet monitoring op met Prometheus en demonstreer met screenshots. (+20%)
-- Zet een Grafana om te gebruiken in plaats van de standaard Prometheus Expression Browser met PromQL (+15%)
-- Gebruik ClusterIP & Nodeport op een logische manier (+5%)
-- Maak en gebruik je eigen Auth service i.p.v. GCP OAuth2 (+25%)
-- Implementeer rate-limiting op je Spring Cloud Gateway (+5%)
-- Maak de interactie met minstens 1 service event-driven door gebruik te maken van een message queue zoals ActiveMQ en async (+20%)
-- Gebruik Kafka i.p.v. ActiveMQ (dit heeft twee pods nodig) (+15%)
+Als laatste heb ik Prometheus, Grafana toegevoegd aan de stack. Deze
+applicaties worden via docker mee met al de rest gedeployed. Beiden zijn nuttig
+om data te visualiseren, maar omdat ik niet blij was met de beschikbare data in
+Prometheus heb ik nog twee extra docker applicaties toegevoegd, namelijk
+_cadvisor_ en _node_exporter_. Cadvisor is verantwoordelijk voor het verzamelen
+van data over de Docker Containers en _node_exporter_ verzamelt data over het
+host-systeem.
 
-## 3. Overview Formula 1 app
+## Componenten en informatie
 
-### 3.1 Thema
-
-Als thema voor deze microservices-applicatie heb ik gekozen voor formule 1.
-Mijn applicatie houdt data bij over de chauffeurs (driver), de circuits en de
-teams.
-
-Voor elk van deze entiteiten heb ik een aparte API gemaakt in `Java` met behulp
-van `spring-boot`.
+Services:
 
 - Driver service
-  - application-name: driver-service
   - Port: 8081
-  - Connected to mysql
-    - port 3306
-    - db = driverdb
-    - user = root
-    - pwd = abc123
+  - Database `mysql`
+  - `DriverService`-klasse volledig getest
 - Grand Prix service
-  - application-name: gp-service
   - Port: 8082
-  - Connected to mysql
-    - port 3307
-    - db = gpdb
-    - user = root
-    - pwd = abc123
+  - Database `mysql`
+  - `GpService`-klasse volledig getest
 - Team service
-  - application-name: driver-service
   - Port: 8080
-  - Connected to mongodb
-    - port 27017
-    - document = 27017
+  - Database `mongodb`
+  - `TeamService`-klasse volledig getest
 - Gateway
-  - application-name: api-gateway
   - Port: 8083
 - Image service
-  - application-name: image-service
   - Port: 8084
+
+Extra:
+
+- `docker-compose`
+- `Prometheus` monitoring
+- `Grafana` visualisatie
+- `Frontend (React)`
+  - Port: 5173 (`npm run dev`)
+
+## Postman requests
+
+Hieronder zie je de API in werking via HTTP-aanvragen die ik via Postman uitgevoerd heb.
+
+### Driver service
+
+All drivers:
+![Get All Drivers](./images/get_drivers.png)
+Add driver:
+![Post Driver](./images/post_driver.png)
+Update driver:
+![Put Driver](./images/put_driver.png)
+Get driver by code:
+![Get Driver](./images/get_driver_code.png)
+
+### Team service
+
+All teams:
+![Get All Teams](./images/get_teams.png)
+Add team:
+![Post Team](./images/post_team.png)
+Get team by code:
+![Get Team](./images/get_team_code.png)
+
+### Grand Prix service
+
+All Grand Prix:
+![Get All Grand Prix](./images/get_gps.png)
+Add Grand Prix:
+![Post Grand Prix](./images/post_gp.png)
+Update Grand Prix:
+![Put Grand Prix](./images/put_gp.png)
+Get Grand Prix by code:
+![Get Grand Prix](./images/get_gp_id.png)
+Delete Grand Prix by code
+![Delete Grand Prix](./images/delete_gp.png)
+en na het verwijderen returned de API-call een 404 http-code.
+![Grand Prix after delete](./images/get_gps_after_delete.png)
+
+### Image service
+
+Image uploaden:
+![Post Image](./images/post_image.png)
+Image openen:
+![Get Image](./images/get_image.png)

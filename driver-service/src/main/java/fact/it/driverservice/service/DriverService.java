@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import fact.it.driverservice.dto.DriverRequest;
@@ -126,5 +127,16 @@ public class DriverService {
 
     public List<DriverResponse> getDriversByTeamCode(String teamCode) {
         return driverRepository.findDriversByTeamCode(teamCode).get().stream().map(this::mapToDriverResponse).toList();
+    }
+
+    public DriverResponse addDriverToTeam(String driverCode, String teamCode) {
+        Optional<Driver> driver = driverRepository.findDriverByDriverCode(driverCode);
+        if (driver.isPresent()) {
+            driver.get().setTeamCode(teamCode);
+            driverRepository.save(driver.get());
+            return mapToDriverResponse(driver.get());
+        } else {
+            throw new RuntimeException("Error: Driver with driverCode " + driverCode + " not found.");
+        }
     }
 }

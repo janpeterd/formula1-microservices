@@ -1,13 +1,16 @@
 package fact.it.teamservice.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import fact.it.teamservice.dto.DriverRequest;
 import fact.it.teamservice.dto.DriverResponse;
 import fact.it.teamservice.dto.TeamRequest;
 import fact.it.teamservice.dto.TeamResponse;
@@ -77,13 +80,33 @@ public class TeamService {
     }
 
     public void createTeam(TeamRequest teamRequest) {
+        // Build a new team entity
         Team team = Team.builder()
+                .teamCode(UUID.randomUUID().toString())
                 .name(teamRequest.getName())
                 .points(teamRequest.getPoints())
                 .imageUrl(teamRequest.getImageUrl())
                 .logoUrl(teamRequest.getLogoUrl())
                 .build();
 
+        // Update drivers with the team code
+        teamRequest.getDriverCodes().forEach(driverCode -> {
+            try {
+                String response = webClient.post()
+                        .uri("http://" + driverServiceBaseUrl + "/api/driver/" + driverCode + "/team")
+                        .bodyValue(team.getTeamCode())
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block(); // Blocking for simplicity; consider using async if applicable
+                System.out.println("UPDATE DRIVERTEAM RESPONSE :: " + response);
+            } catch (Exception e) {
+                // Log the error and decide if you want to fail the whole operation or continue
+                System.err.println("Failed to update driver " + driverCode + " with team code: " + e.getMessage());
+                throw new RuntimeException("Failed to update driver: " + driverCode, e);
+            }
+        });
+
+        // Save the team in the repository
         teamRepository.save(team);
     }
 

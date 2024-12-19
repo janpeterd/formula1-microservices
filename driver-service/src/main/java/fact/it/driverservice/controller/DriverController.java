@@ -32,6 +32,11 @@ public class DriverController {
         driverService.createDriver(driverRequest);
     }
 
+    @PostMapping("/{driverCode}/team")
+    public void addDriverToTeam(@PathVariable String driverCode, @RequestBody String teamCode) {
+        driverService.addDriverToTeam(driverCode, teamCode);
+    }
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<DriverResponse> getAllDrivers() {

@@ -1,8 +1,6 @@
-import TeamResponse from "./teamResponse";
-
 interface DriverResponse {
   driverCode: string;
-  teamCode: TeamResponse;
+  teamCode: string;
   firstName: string;
   lastName: string;
   country: string;

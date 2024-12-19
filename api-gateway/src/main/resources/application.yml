@@ -78,7 +78,7 @@ spring:
             - Path=/team/{teamCode}
           filters:
             - SetPath=/api/team/{teamCode}
-        - id: get-image-service-get-all
+        - id: get-image-service
           uri: http://${TEAM_SERVICE_BASEURL:localhost:8084}
           predicates:
             - Path=/images/**

@@ -35,11 +35,12 @@ public class GpController {
     @GetMapping("/{gpCode}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<GpResponse> getGpByCode(@PathVariable String gpCode) {
-        GpResponse gp = gpService.getGp(gpCode);
-        if (gp != null) {
+        try {
+            GpResponse gp = gpService.getGp(gpCode);
             return new ResponseEntity<>(gp, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/{gpCode}")

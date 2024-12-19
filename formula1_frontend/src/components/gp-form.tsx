@@ -227,17 +227,27 @@ function GrandPrixForm() {
     const paths: Paths = { imageUrl: "", trackImageUrl: "" };
     // Upload imageUrl
     if (values.imageUrl && values.trackImageUrl) {
-      const imageReponse = await ImageApi.post({ file: values.imageUrl });
-      toast({
-        title: "Uploaded image",
-        description: (
-          <div className="flex gap-x-2 justify-center items-center">
-            <img src={`${API_URL}/${imageReponse.data}`} alt="uploaded image" className="w-20 h-20 object-cover rounded-lg" />
-            <p className="leading-7 [&:not(:first-child)]:mt-6">Succesfully uploaded Grand Prix Image</p>
-          </div >
-        ),
-      })
-      paths.imageUrl = imageReponse.data;
+      try {
+
+        const imageReponse = await ImageApi.post({ file: values.imageUrl });
+        toast({
+          title: "Uploaded image",
+          description: (
+            <div className="flex gap-x-2 justify-center items-center">
+              <img src={`${API_URL}/${imageReponse.data}`} alt="uploaded image" className="w-20 h-20 object-cover rounded-lg" />
+              <p className="leading-7 [&:not(:first-child)]:mt-6">Succesfully uploaded Grand Prix Image</p>
+            </div >
+          ),
+        })
+        paths.imageUrl = imageReponse.data;
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Error uploading image",
+          description: `Something went wrong when trying to upload the image. ${error.message}`,
+        })
+
+      }
 
       try {
         const trackResponse = await ImageApi.post({ file: values.trackImageUrl });
