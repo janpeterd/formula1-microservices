@@ -185,8 +185,6 @@ class GpServiceTest {
 
     @Test
     void testUpdateGp() {
-        when(gpRepository.findGpByGpCode(gp.getGpCode())).thenReturn(Optional.of(gp));
-
         // Prepare test data
         String winningTeamCode = gpRequest.getWinningTeamCode();
         String winningDriverCode = gpRequest.getWinningDriverCode();
