@@ -41,6 +41,11 @@ class TeamServiceApplicationTests {
     private WebClient webClient;
 
     @Mock
+    WebClient.RequestBodyUriSpec requestBodyUriSpec;
+    @Mock
+    WebClient.RequestBodySpec requestBodySpec;
+
+    @Mock
     private WebClient.RequestHeadersUriSpec requestHeadersUriSpec;
 
     @Mock
@@ -83,8 +88,24 @@ class TeamServiceApplicationTests {
 
     @Test
     void createTeam() {
+        Mono<String> mono = Mono.just("success");
+
+        when(webClient.post()).thenReturn(requestBodyUriSpec);
+        when(requestBodyUriSpec.uri(anyString())).thenReturn(requestBodySpec);
+        when(requestBodySpec.bodyValue(any())).thenReturn((WebClient.RequestHeadersSpec) requestBodySpec);
+        when(requestBodySpec.retrieve()).thenReturn(responseSpec);
+        when(responseSpec.bodyToMono(String.class)).thenReturn(mono);
+
+        // Perform the action
         teamService.createTeam(teamRequest);
+
+        // Verify the team was saved
         verify(teamRepository).save(any(Team.class));
+
+        // Verify that each driver was updated
+        teamRequest.getDriverCodes().forEach(driverCode -> {
+            verify(requestBodyUriSpec).uri("http://localhost:8081/api/driver/" + driverCode + "/team");
+        });
     }
 
     @Test
@@ -143,8 +164,7 @@ class TeamServiceApplicationTests {
 
         // Add this line to handle the ParameterizedTypeReference<List<DriverResponse>>
         when(responseSpec.bodyToMono(new ParameterizedTypeReference<List<DriverResponse>>() {
-        }))
-                .thenReturn(Mono.just(Arrays.asList(driverResponse)));
+        })).thenReturn(Mono.just(Arrays.asList(driverResponse)));
 
         // act
         TeamResponse response = teamService.getTeamByTeamCode(team.getTeamCode());
