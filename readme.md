@@ -21,31 +21,32 @@ Bepaalde endpoints van deze services kunnen bereikt worden via de
 **gateway-service**. Deze gateway bevat ook een implementatie van OAuth2 met
 Google Account.
 
-Ik wou ook voor elke service wat foto's opslaat (om een mooiere frontend te
+Ik wou ook voor elke service wat foto's opslaan (om een mooiere frontend te
 maken), maar ik besefte dat het in een microservices-applicatie niet echt het
 plan is om in elke service foto's op te slaan. In de realiteit zal er een
 andere centrale service (zoals _S3-buckets_) gebruikt worden om media in op te
 slaan, maar aangezien ik hier geen toegang tot had heb ik besloten om dit
-gedrag wel te centraliseren in een service die noemt **image-service**. In deze
-service staan alle foto's opgeslagen en de frontend gebruikt deze om foto's op
-te halen.
+gedrag wel te centraliseren in een service: de **image-service**. In deze
+service staan alle foto's opgeslagen.
 
 Zoals hierboven al kort vermeld heb ik ook **frontend** gemaakt. Deze heb ik
-gemaakt met behulp van **React**. Op deze frontend wordt heel wat gegevens uit
-de services weergegeven en kan iemand met login toegang ook Grand Prix aanmaken
-via een formulier. Om dit klaar te krijgen was natuurlijk ook Google
-OAuth2-login nodig op de frontend.
+gemaakt met `React`. Op deze frontend worden heel wat gegevens uit de
+services weergegeven. Iemand die inlogt (en in de lijst van toegestane
+e-mailadressen staat) kan Grand Prix aanmaken, wijzigen en verwijderen. Om dit
+klaar te krijgen was ook Google OAuth2-login nodig op de frontend. De frontend
+stuurt enkel requests naar de gateway-service, die ze dan doorstuurt naar de
+juiste service.
 
 Alle services kunnen zeer makkelijk gedeployed worden, door middel van
-_docker_. Er is ook een _docker-compose_-bestand dat alle services samen
+`docker`. Er is een `docker-compose`-bestand (`docker-compose.yaml`) dat alle services samen
 opstart.
 
-Als laatste heb ik Prometheus, Grafana toegevoegd aan de stack. Deze
+Als laatste heb ik `Prometheus` en `Grafana` toegevoegd aan de stack. Deze
 applicaties worden via docker mee met al de rest gedeployed. Beiden zijn nuttig
 om data te visualiseren, maar omdat ik niet blij was met de beschikbare data in
-Prometheus heb ik nog twee extra docker applicaties toegevoegd, namelijk
-_cadvisor_ en _node_exporter_. Cadvisor is verantwoordelijk voor het verzamelen
-van data over de Docker Containers en _node_exporter_ verzamelt data over het
+Prometheus heb ik nog twee extra docker-applicaties toegevoegd: `cadvisor` en
+`node_exporter`. `cadvisor` is verantwoordelijk voor het verzamelen
+van data over de containers en `node_exporter` verzamelt data over het
 host-systeem.
 
 ## Componenten en informatie
