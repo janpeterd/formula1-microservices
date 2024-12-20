@@ -275,6 +275,75 @@ class GpServiceTest {
 
     @Test
     void testCreateGp() {
+        // Prepare test data
+        String winningTeamCode = gpRequest.getWinningTeamCode();
+        String winningDriverCode = gpRequest.getWinningDriverCode();
+        String secondDriverCode = gpRequest.getSecondDriverCode();
+        String thirdDriverCode = gpRequest.getThirdDriverCode();
+
+        // Prepare mock responses
+        DriverResponse mockWinningDriver = DriverResponse.builder()
+                .driverCode(winningDriverCode)
+                .firstName("John")
+                .lastName("Doe")
+                .country("Belgium")
+                .teamCode(winningTeamCode)
+                .seasonPoints(42)
+                .imageUrl("images/test")
+                .build();
+
+        DriverResponse mockSecondDriver = DriverResponse.builder()
+                .driverCode(secondDriverCode)
+                .firstName("Jane")
+                .lastName("Smith")
+                .country("Italy")
+                .teamCode("another-team-code")
+                .seasonPoints(38)
+                .imageUrl("images/test2")
+                .build();
+
+        DriverResponse mockThirdDriver = DriverResponse.builder()
+                .driverCode(thirdDriverCode)
+                .firstName("Bob")
+                .lastName("Brown")
+                .country("France")
+                .teamCode("third-team-code")
+                .seasonPoints(35)
+                .imageUrl("images/test3")
+                .build();
+
+        TeamResponse mockTeam = TeamResponse.builder()
+                .teamCode(winningTeamCode)
+                .name("Test team")
+                .points(100)
+                .drivers(Arrays.asList(mockWinningDriver, mockSecondDriver, mockThirdDriver))
+                .imageUrl("images/testTeam.jpg")
+                .logoUrl("images/testTeamLogo.jpg")
+                .build();
+
+        // Mock WebClient interactions for team
+        when(webClient.get()).thenReturn(requestHeadersUriSpec);
+        // Mock URI responses dynamically based on input
+        when(requestHeadersUriSpec.uri(anyString())).thenAnswer(invocation -> {
+            String uri = invocation.getArgument(0, String.class); // Correctly retrieve the URI string
+            if (uri.contains("/api/driver/" + winningDriverCode)) {
+                when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+                when(responseSpec.bodyToMono(DriverResponse.class)).thenReturn(Mono.just(mockWinningDriver));
+            } else if (uri.contains("/api/driver/" + secondDriverCode)) {
+                when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+                when(responseSpec.bodyToMono(DriverResponse.class)).thenReturn(Mono.just(mockSecondDriver));
+            } else if (uri.contains("/api/driver/" + thirdDriverCode)) {
+                when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+                when(responseSpec.bodyToMono(DriverResponse.class)).thenReturn(Mono.just(mockThirdDriver));
+            } else if (uri.contains("/api/team/" + winningTeamCode)) {
+                when(requestHeadersSpec.retrieve()).thenReturn(responseSpec);
+                when(responseSpec.bodyToMono(TeamResponse.class)).thenReturn(Mono.just(mockTeam));
+            } else {
+                throw new IllegalArgumentException("Unexpected URI: " + uri);
+            }
+            return requestHeadersSpec;
+        });
+
         gpService.createGp(gpRequest);
 
         verify(gpRepository).save(any(Gp.class));
