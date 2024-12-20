@@ -18,12 +18,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ImageUploadService {
     public String uploadImage(MultipartFile file) throws IOException {
+        // NOTE: I know this is not best practice, but in production this entire
+        // service would be replaced with a CDN or S3 bucket
         Path uploadPath = Paths.get("target/classes/static/images/");
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
 
-        System.out.println("File Content Type: " + file.getContentType());
         ArrayList<String> allowedTypes = new ArrayList<String>(
                 List.of("image/jpeg", "image/png", "image/webp", "image/octet-stream"));
 
@@ -33,13 +34,10 @@ public class ImageUploadService {
             Path filePath = uploadPath.resolve(fileName);
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            Path relativePath = filePath.subpath(3, filePath.getNameCount()); // you can use this part of the string to
-                                                                              // get
-                                                                              // the image
+            Path relativePath = filePath.subpath(3, filePath.getNameCount());
 
             return relativePath.toString();
         }
-        System.out.println("IMG FILETYPE NOT ALLOWED");
         throw new InvalidContentTypeException(
                 "Invalid file type. Allowed types are: image/jpeg, image/png, image/webp.");
 

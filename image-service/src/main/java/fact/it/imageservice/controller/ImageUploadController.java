@@ -26,13 +26,12 @@ public class ImageUploadController {
     @PostMapping
     public ResponseEntity<String> createGp(@RequestParam MultipartFile file) {
         try {
-            String filePath = imageUploadService.uploadImage(file);
-            return ResponseEntity.ok(filePath);
+            return new ResponseEntity<>(imageUploadService.uploadImage(file), HttpStatus.OK);
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading image");
+            return new ResponseEntity<>("Error uploading image", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidContentTypeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Invalid image type. Only png, jpg and webp are allowed");
+            return new ResponseEntity<>("Invalid image type. Only png, jpg and webp are allowed",
+                    HttpStatus.BAD_REQUEST);
         }
     }
 }
