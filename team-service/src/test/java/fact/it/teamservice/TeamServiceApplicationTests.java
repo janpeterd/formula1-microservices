@@ -82,12 +82,12 @@ class TeamServiceApplicationTests {
     }
 
     @Test
-    void mapToTeamResponse() {
+    void testMapToTeamResponse() {
 
     }
 
     @Test
-    void createTeam() {
+    void testCreateTeam() {
         Mono<String> mono = Mono.just("success");
 
         when(webClient.post()).thenReturn(requestBodyUriSpec);
@@ -109,7 +109,7 @@ class TeamServiceApplicationTests {
     }
 
     @Test
-    void getAllTeams() {
+    void testGetAllTeams() {
         DriverResponse driverResponse = DriverResponse.builder()
                 .driverCode(UUID.randomUUID().toString())
                 .firstName("Test First")
@@ -145,7 +145,7 @@ class TeamServiceApplicationTests {
     }
 
     @Test
-    void getTeamByTeamCode() {
+    void testGetTeamByTeamCode() {
         DriverResponse driverResponse = DriverResponse.builder()
                 .driverCode(UUID.randomUUID().toString())
                 .firstName("Test First")

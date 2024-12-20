@@ -135,4 +135,17 @@ class DriverServiceApplicationTests {
         assertThat(drivers.get(0).getImageUrl()).isEqualTo("images/testDriver.png");
 
     }
+
+    @Test
+    void testAddDriverToTeam() {
+        when(driverRepository.findDriverByDriverCode(driver.getDriverCode())).thenReturn(Optional.of(driver));
+
+        String newTeamCode = UUID.randomUUID().toString();
+        DriverResponse driverResponse = driverService.addDriverToTeam(driver.getDriverCode(),
+                newTeamCode);
+
+        verify(driverRepository).findDriverByDriverCode(driver.getDriverCode());
+        assertThat(driverResponse.getTeamCode()).isEqualTo(newTeamCode);
+        verify(driverRepository).save(any(Driver.class));
+    }
 }
