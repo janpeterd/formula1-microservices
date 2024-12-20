@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -115,7 +116,7 @@ public class GpService {
         }
     }
 
-    public void createGp(GpRequest gpRequest) {
+    public GpResponse createGp(GpRequest gpRequest) {
         Gp gp = Gp.builder()
                 .gpCode(UUID.randomUUID().toString())
                 .name(gpRequest.getName())
@@ -133,6 +134,7 @@ public class GpService {
                 .build();
 
         gpRepository.save(gp);
+        return mapToGpResponse(gp);
     }
 
     // helper function

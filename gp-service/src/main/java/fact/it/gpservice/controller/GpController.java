@@ -46,7 +46,6 @@ public class GpController {
     @PutMapping("/{gpCode}")
     public ResponseEntity<GpResponse> createGp(@PathVariable String gpCode, @RequestBody GpRequest gpRequest) {
         try {
-
             GpResponse gp = gpService.updateGp(gpCode, gpRequest);
             return new ResponseEntity<>(gp, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
@@ -55,18 +54,17 @@ public class GpController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
-    public void createGp(@RequestBody GpRequest gpRequest) {
-        gpService.createGp(gpRequest);
+    public ResponseEntity<GpResponse> createGp(@RequestBody GpRequest gpRequest) {
+        return new ResponseEntity<>(gpService.createGp(gpRequest), HttpStatus.OK);
     }
 
     @DeleteMapping()
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteGp(@RequestParam String gpCode) {
+    public ResponseEntity<String> deleteGp(@RequestParam String gpCode) {
         try {
             gpService.deleteGp(gpCode);
+            return new ResponseEntity<>("Succesfully deleted Grand Prix with code: " + gpCode, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+            return new ResponseEntity<>("Grand Prix with code: '" + gpCode + "' does not exist.", HttpStatus.NOT_FOUND);
         }
     }
 }
