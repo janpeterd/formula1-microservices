@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import fact.it.driverservice.dto.DriverRequest;
@@ -82,7 +81,7 @@ public class DriverService {
                 .build();
     }
 
-    public void createDriver(DriverRequest driverRequest) {
+    public DriverResponse createDriver(DriverRequest driverRequest) {
         Driver driver = Driver.builder()
                 // Generate a UUID as driver code
                 .driverCode(UUID.randomUUID().toString())
@@ -94,6 +93,7 @@ public class DriverService {
                 .imageUrl(driverRequest.getImageUrl())
                 .build();
         driverRepository.save(driver);
+        return mapToDriverResponse(driver);
     }
 
     public DriverResponse getDriverByDriverCode(String driverCode) {
@@ -126,7 +126,13 @@ public class DriverService {
     }
 
     public List<DriverResponse> getDriversByTeamCode(String teamCode) {
-        return driverRepository.findDriversByTeamCode(teamCode).get().stream().map(this::mapToDriverResponse).toList();
+        Optional<List<Driver>> driver = driverRepository.findDriversByTeamCode(teamCode);
+        if (driver.isPresent()) {
+            return driver.get().stream().map(this::mapToDriverResponse).toList();
+        } else {
+            throw new RuntimeException("Error: finding drivers with teamCode: " + teamCode);
+        }
+
     }
 
     public DriverResponse addDriverToTeam(String driverCode, String teamCode) {

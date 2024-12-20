@@ -27,14 +27,23 @@ public class DriverController {
     private final DriverService driverService;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
-    public void createDriver(@RequestBody DriverRequest driverRequest) {
-        driverService.createDriver(driverRequest);
+    public ResponseEntity<DriverResponse> createDriver(@RequestBody DriverRequest driverRequest) {
+        try {
+            return new ResponseEntity<>(driverService.createDriver(driverRequest), HttpStatus.OK);
+        } catch (IllegalArgumentException exception) {
+            return new ResponseEntity<>(driverService.createDriver(driverRequest), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/{driverCode}/team")
-    public void addDriverToTeam(@PathVariable String driverCode, @RequestBody String teamCode) {
-        driverService.addDriverToTeam(driverCode, teamCode);
+    public ResponseEntity<DriverResponse> addDriverToTeam(@PathVariable String driverCode,
+            @RequestBody String teamCode) {
+        try {
+            return new ResponseEntity<DriverResponse>(driverService.addDriverToTeam(driverCode, teamCode),
+                    HttpStatus.OK);
+        } catch (RuntimeException exception) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping
@@ -53,7 +62,6 @@ public class DriverController {
     }
 
     @PutMapping("/{driverCode}")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<DriverResponse> updateDriver(@RequestBody DriverRequest updateDriver,
             @PathVariable String driverCode) {
         Optional<DriverResponse> updatedDriverOpt = driverService.updateDriver(updateDriver, driverCode);
@@ -64,8 +72,11 @@ public class DriverController {
     }
 
     @GetMapping("/team")
-    @ResponseStatus(HttpStatus.OK)
-    public List<DriverResponse> getDriversByTeamCode(@RequestParam String teamCode) {
-        return driverService.getDriversByTeamCode(teamCode);
+    public ResponseEntity<List<DriverResponse>> getDriversByTeamCode(@RequestParam String teamCode) {
+        try {
+            return new ResponseEntity<>(driverService.getDriversByTeamCode(teamCode), HttpStatus.OK);
+        } catch (RuntimeException exception) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
