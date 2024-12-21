@@ -113,7 +113,7 @@ public class GpService {
                             .secondDriverCode("3c7b8e9f-6b8a-4e7d-9b6f-3a8c5e4b9a8d")
                             .thirdDriverCode("8a7b9c6e-5b9d-4f7a-9e8c-3f7b9e8a6c7d")
                             .imageUrl("images/Great_Britain.avif")
-                            .trackImageUrl("images/Great_Britain_Circuit")
+                            .trackImageUrl("images/Great_Britain_Circuit.avif")
                             .build(),
 
                     Gp.builder()
