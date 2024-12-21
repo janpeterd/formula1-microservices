@@ -1,6 +1,7 @@
 package fact.it.imageservice.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,7 +34,17 @@ public class ImageUploadService {
 
             String fileName = file.getOriginalFilename();
             Path filePath = uploadPath.resolve(fileName);
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            try (InputStream in = file.getInputStream()) {
+                Files.copy(in, filePath, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("Wrote file to disk");
+            } catch (IOException ioException) {
+                System.out.println("Error write file to disk: " + ioException);
+            } catch (UnsupportedOperationException unsupportedOperationException) {
+                System.out.println("Error write file to disk UNSUPPORTED: " + unsupportedOperationException);
+            } catch (SecurityException securityException) {
+                System.out.println("Error not enough permissions " + securityException);
+            }
 
             Path relativePath = filePath.subpath(3, filePath.getNameCount());
 

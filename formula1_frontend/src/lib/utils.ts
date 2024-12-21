@@ -6,7 +6,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const API_URL = "http://localhost:8083";
+export const API_URL = import.meta.env.PROD
+  ? "http://127.0.0.1:8083"
+  : "http://127.0.0.1:8083";
 
 export function getDriverFullName(driver: DriverResponse) {
   return `${driver.firstName} ${driver.lastName}`;

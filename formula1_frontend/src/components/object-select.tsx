@@ -2,7 +2,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { FormControl } from "./ui/form";
 import { Button } from "./ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./ui/command";
-import { Check, ChevronsUpDown, LogIn } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type ValueLabel = {

@@ -134,3 +134,18 @@ jobs:
 
       - name: Upload container to Docker Hub with Push
         run: docker push ${{ secrets.DOCKER_USER }}/formula1-api-gateway:latest
+  frontend:
+    runs-on: ubuntu-latest
+    name: npm build deliver formula1-frontend container
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Docker login
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Docker Build
+        run: docker build -t ${{ secrets.DOCKER_USER }}/formula1-frontend:latest ./frontend
+
+      - name: Upload container to Docker Hub with Push
+        run: docker push ${{ secrets.DOCKER_USER }}/formula1-frontend:latest

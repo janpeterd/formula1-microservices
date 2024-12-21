@@ -1,4 +1,10 @@
 services:
+ frontend:
+  container_name: "formula1-frontend"
+  image: janpeterd/formula1-frontend:latest
+  ports: 
+    - 80:80
+
  prometheus:
   container_name: prometheus
   restart: unless-stopped
@@ -119,6 +125,8 @@ services:
 
  image-service:
   image: janpeterd/formula1-image-service:latest
+  volumes:
+    - image_service_data:/target/classes/static
   ports:
     - 8084:8084
 
@@ -147,5 +155,6 @@ volumes:
  mongodb_team_data:
  mysql_driver_data:
  mysql_gp_data:
+ image_service_data:
  grafana_storage:
 

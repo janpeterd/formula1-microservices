@@ -22,7 +22,7 @@ import TeamApi from "@/lib/team_service"
 import GpApi from "@/lib/gp_service"
 import GpRequest from "@/dto/gpRequest"
 import ImageApi from "@/lib/image_service"
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { useToast } from "@/hooks/use-toast"
 import { API_URL, fileObjectToDataUrl, urlToFile } from "@/lib/utils"
 
@@ -45,8 +45,8 @@ const gpSchema = z.object({
   imageUrl: z
     .instanceof(File)
     .refine(
-      (file) => file && file.size <= 35 * 1024 * 1024,
-      "File size should be 35MB or less"
+      (file) => file && file.size <= 10 * 1024 * 1024,
+      "File size should be 10MB or less"
     )
     .refine(
       (file) => {
@@ -63,8 +63,8 @@ const gpSchema = z.object({
   trackImageUrl: z
     .instanceof(File)
     .refine(
-      (file) => file && file.size <= 5 * 1024 * 1024,
-      "File size should be 5MB or less"
+      (file) => file && file.size <= 10 * 1024 * 1024,
+      "File size should be 10MB or less"
     )
     .refine(
       (file) => {
@@ -530,8 +530,11 @@ function GrandPrixForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="bg-accent font-f1 font-bold text-lg">
+            <Button type="submit" className="bg-accent font-f1 font-bold text-lg mx-1">
               {gpCode ? "Update" : "Submit"}
+            </Button>
+            <Button type="submit" className="font-f1 font-bold text-lg mx-1">
+              <Link to="/gp-admin">Cancel</Link>
             </Button>
           </form>
         </Form>

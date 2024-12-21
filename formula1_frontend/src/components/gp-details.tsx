@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import DriverCard from "./driver-card";
 import GrandPrixStat from "./gp-stat";
 import GpResponse from "@/dto/gpResponse";
+import { API_URL } from "@/lib/utils";
 
 function GrandPrixDetails({ gp }: { gp: GpResponse }) {
 
@@ -10,7 +11,7 @@ function GrandPrixDetails({ gp }: { gp: GpResponse }) {
       <h1 className="font-f1 font-bold text-3xl italic py-1">{gp.name} - {gp.country}</h1>
       <div className="flex flex-wrap justify-between items-center border-accent border-r-[12px] border-t-[12px] rounded-tr-2xl p-6 md:p-14 mb-10 gap-x-10 gap-y-4">
         <div className="max-h-[500px] lg:max-w-[550px] w-full lg:w-1/2 mx-auto" >
-          <img src={`http://localhost:8084/${gp.trackImageUrl}`} alt={gp.name} className="h-auto w-full object-contain rounded-xl" />
+          <img src={`${API_URL}/${gp.trackImageUrl}`} alt={gp.name} className="h-auto w-full object-contain rounded-xl" />
         </div>
         <div className="lg:flex-grow grid grid-cols-1 w-full md:grid-rows-2 md:w-auto md:grid-flow-col gap-4">
           <GrandPrixStat label="Distance in meters" stat={gp.distanceMeters.toString()} />

@@ -40,25 +40,36 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
     setDecodedToken(decoded);
     toast({
       title: "Succesfully logged in",
+      // @ts-expect-error: name, email doesnt exist
       description: `You are now logged in as: ${decoded.name} (${decoded.email})`,
     })
   }, [renderButtonElId, setIsSignedIn, toast]);
 
-
-
-
-
-
   useEffect(() => {
-    /* Function to Initialize Google Sign-In */
+    function renderLoginButton() {
+
+      /* Render the Sign-In button */
+      // @ts-expect-error google doesnt exist according to typescript
+      window.google.accounts.id.renderButton(
+        document.getElementById(renderButtonElId),
+        { size: "medium", shape: "pill", text: "signin" }
+      );
+    }
+
+
     function googleInit() {
       console.log("GOOGLE OAUTH2 INIT");
 
-      // @ts-expect-error google doesnt exist according to typescript
-      window.google.accounts.id.initialize({
-        client_id: "238164061415-sci0phqk4p0e2bj04dmcm430mu86lo5r.apps.googleusercontent.com",
-        callback: handleCallbackResponse,
-      });
+      // @ts-expect-error google type error
+      if (window.google && window.google.accounts) {
+        // @ts-expect-error google type error
+        window.google.accounts.id.initialize({
+          client_id: "238164061415-sci0phqk4p0e2bj04dmcm430mu86lo5r.apps.googleusercontent.com",
+          callback: handleCallbackResponse,
+        });
+      } else {
+        console.error("Google API not loaded");
+      }
     }
 
     const idToken = Cookies.get("idToken");
@@ -74,22 +85,26 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
           console.log("Encoded JWT ID Token:", idToken);
         }
       }
-
     } else {
       googleInit();
     }
+    renderLoginButton();
+  }, [handleCallbackResponse, googleLogout, setIsSignedIn, renderButtonElId]);
 
-    /* Render the Sign-In button */
-    // @ts-expect-error google doesnt exist according to typescript
-    window.google.accounts.id.renderButton(
-      document.getElementById(renderButtonElId),
-      { size: "medium", shape: "pill", text: "signin" }
-    );
-  }, [googleLogout, handleCallbackResponse, renderButtonElId, setIsSignedIn]);
+
+
+  /* Render the Sign-In button */
+  // @ts-expect-error google doesnt exist according to typescript
+  window.google.accounts.id.renderButton(
+    document.getElementById(renderButtonElId),
+    { size: "medium", shape: "pill", text: "signin" }
+  );
+
 
   return (
     <div>
       {isSignedIn ?
+        // @ts-expect-error: picture doesnt exist
         <UserProfile image={decodedToken.picture} onLogOut={googleLogout} />
         :
         <div id={renderButtonElId}></div>

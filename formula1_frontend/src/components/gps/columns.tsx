@@ -6,6 +6,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { DataTableColumnHeader } from "./colum-headers"
 import { Button } from "../ui/button"
 import DeleteButton from "./delete-button"
+import { API_URL } from "@/lib/utils"
 export const columns: ColumnDef<GpResponse>[] = [
   {
     id: "name",
@@ -84,7 +85,7 @@ export const columns: ColumnDef<GpResponse>[] = [
       <DataTableColumnHeader column={column} title="ImageUrl" />
     ),
     cell: ({ row }) => (
-      <img src={`http://localhost:8084/${row.getValue("imageUrl")}`} alt="Image" style={{ width: "100px", height: "auto" }} />
+      <img src={`${API_URL}/${row.getValue("imageUrl")}`} alt="Image" style={{ width: "100px", height: "auto" }} />
     ),
   },
   {
@@ -94,7 +95,7 @@ export const columns: ColumnDef<GpResponse>[] = [
       <DataTableColumnHeader column={column} title="TrackImageUrl" />
     ),
     cell: ({ row }) => (
-      <img src={`http://localhost:8084/${row.getValue("trackImageUrl")}`} alt="Track Image" style={{ width: "100px", height: "auto" }} />
+      <img src={`${API_URL}/${row.getValue("trackImageUrl")}`} alt="Track Image" style={{ width: "100px", height: "auto" }} />
     ),
   },
   {
@@ -107,9 +108,12 @@ export const columns: ColumnDef<GpResponse>[] = [
 
       return (
         <div className="flex flex-col justify-center items-center gap-y-0.5">
-          <Button onClick={() => table.options.meta?.navigate(`/grand-prix-add/${row.original.gpCode}`)} className="bg-dark px-3 py-1">
-            <Pencil />
-          </Button>
+          {
+            // @ts-expect-error navigate
+            <Button onClick={() => table.options.meta?.navigate(`/grand-prix-add/${row.original.gpCode}`)} className="bg-dark px-3 py-1">
+              <Pencil />
+            </Button>
+          }
           <DeleteButton gpCode={gpCode} row={row} table={table} />
         </div>
       );
