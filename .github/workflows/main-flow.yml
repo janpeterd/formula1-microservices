@@ -145,7 +145,7 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Docker Build
-        run: docker build -t ${{ secrets.DOCKER_USER }}/formula1-frontend:latest ./frontend
+        run: docker build -t ${{ secrets.DOCKER_USER }}/formula1-frontend:latest ./formula1_frontend
 
       - name: Upload container to Docker Hub with Push
         run: docker push ${{ secrets.DOCKER_USER }}/formula1-frontend:latest
