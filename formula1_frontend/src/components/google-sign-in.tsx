@@ -11,6 +11,16 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
   const [decodedToken, setDecodedToken] = useState({});
   const { toast } = useToast();
 
+  const renderLoginButton = useCallback(() => {
+    console.log("RENDERING LOGIN BUTTON")
+    /* Render the Sign-In button */
+    // @ts-expect-error google doesnt exist according to typescript
+    window.google.accounts.id.renderButton(
+      document.getElementById(renderButtonElId),
+      { size: "medium", shape: "pill", text: "signin" }
+    );
+  }, [renderButtonElId]);
+
   // Stable googleLogout function
   const googleLogout = useCallback(() => {
     Cookies.remove("idToken");
@@ -20,8 +30,19 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
       title: "Succesfully logged out",
       description: `You are now logged out.`,
     })
-    document.getElementById(renderButtonElId)?.classList.remove("hidden");
-  }, [renderButtonElId, setIsSignedIn, toast]);
+    console.log("renderButtonElId", renderButtonElId)
+    const element = document.getElementById(renderButtonElId);
+    console.log("logout element", element)
+    if (element !== null) {
+      element.classList.remove("hidden");
+      element.classList.add("block");
+      console.log("removed hidden element");
+    }
+
+    renderLoginButton();
+  }, [renderLoginButton, renderButtonElId, setIsSignedIn, toast]);
+
+
 
   // @ts-expect-error google callback response unknown type
   const handleCallbackResponse = useCallback((response) => {
@@ -46,15 +67,6 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
   }, [renderButtonElId, setIsSignedIn, toast]);
 
   useEffect(() => {
-    function renderLoginButton() {
-
-      /* Render the Sign-In button */
-      // @ts-expect-error google doesnt exist according to typescript
-      window.google.accounts.id.renderButton(
-        document.getElementById(renderButtonElId),
-        { size: "medium", shape: "pill", text: "signin" }
-      );
-    }
 
 
     function googleInit() {
@@ -89,16 +101,8 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
       googleInit();
     }
     renderLoginButton();
-  }, [handleCallbackResponse, googleLogout, setIsSignedIn, renderButtonElId]);
+  }, [handleCallbackResponse, toast, setIsSignedIn, renderButtonElId, googleLogout, renderLoginButton]);
 
-
-
-  /* Render the Sign-In button */
-  // @ts-expect-error google doesnt exist according to typescript
-  window.google.accounts.id.renderButton(
-    document.getElementById(renderButtonElId),
-    { size: "medium", shape: "pill", text: "signin" }
-  );
 
 
   return (
@@ -106,9 +110,9 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
       {isSignedIn ?
         // @ts-expect-error: picture doesnt exist
         <UserProfile image={decodedToken.picture} onLogOut={googleLogout} />
-        :
-        <div id={renderButtonElId}></div>
+        : null
       }
+      <div id={renderButtonElId}></div>
     </div>
   );
 }

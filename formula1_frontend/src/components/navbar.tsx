@@ -30,7 +30,7 @@ function Navbar() {
                 <NavLink to="/drivers" className={({ isActive }) => isActive ? "underline font-bold" : undefined} >Drivers</NavLink>
               </DropdownMenuItem>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <GoogleSignInButton renderButtonElId="navbarSignInButton" />
+              <GoogleSignInButton renderButtonElId="navbarSignInButtonSmall" />
               <DropdownMenuSeparator />
               <DropdownMenuItem >Log Out</DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -51,7 +51,7 @@ function Navbar() {
         <div className="hidden md:flex gap-x-4 justify-center items-center">
           <NavLink to="/grand-prix" className={({ isActive }) => isActive ? "underline font-bold" : undefined}>Grand Prix</NavLink>
           <NavLink to="/drivers" className={({ isActive }) => isActive ? "underline font-bold" : undefined} >Drivers</NavLink>
-          <GoogleSignInButton renderButtonElId="navbarSignInButton" />
+          <GoogleSignInButton renderButtonElId="navbarSignInButtonLarge" />
         </div>
       </div>
     </div>
