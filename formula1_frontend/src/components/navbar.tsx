@@ -12,7 +12,7 @@ function Navbar() {
           <div className="h-full">
             <img src={Logo} alt="Logo" className="h-full w-auto p-1" />
           </div>
-          <span className="font-bold text-3xl italic">Grand-Prix Microservices</span>
+          <span className="font-bold text-xl md:text-3xl italic">Grand Prix Microservices&#8482;</span>
         </Link>
 
         <div className="block md:hidden">

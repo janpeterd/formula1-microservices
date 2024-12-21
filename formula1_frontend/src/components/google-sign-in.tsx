@@ -21,7 +21,7 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
       description: `You are now logged out.`,
     })
     document.getElementById(renderButtonElId)?.classList.remove("hidden");
-  }, [renderButtonElId, setIsSignedIn]);
+  }, [renderButtonElId, setIsSignedIn, toast]);
 
   // @ts-expect-error google callback response unknown type
   const handleCallbackResponse = useCallback((response) => {
@@ -42,10 +42,25 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
       title: "Succesfully logged in",
       description: `You are now logged in as: ${decoded.name} (${decoded.email})`,
     })
-  }, [renderButtonElId, setIsSignedIn]);
+  }, [renderButtonElId, setIsSignedIn, toast]);
+
+
+
+
 
 
   useEffect(() => {
+    /* Function to Initialize Google Sign-In */
+    function googleInit() {
+      console.log("GOOGLE OAUTH2 INIT");
+
+      // @ts-expect-error google doesnt exist according to typescript
+      window.google.accounts.id.initialize({
+        client_id: "238164061415-sci0phqk4p0e2bj04dmcm430mu86lo5r.apps.googleusercontent.com",
+        callback: handleCallbackResponse,
+      });
+    }
+
     const idToken = Cookies.get("idToken");
     if (idToken) {
       const decodedToken = jwtDecode(idToken);
@@ -60,14 +75,9 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
         }
       }
 
+    } else {
+      googleInit();
     }
-
-    /* Initialize Google Sign-In */
-    // @ts-expect-error google doesnt exist according to typescript
-    window.google.accounts.id.initialize({
-      client_id: "238164061415-sci0phqk4p0e2bj04dmcm430mu86lo5r.apps.googleusercontent.com",
-      callback: handleCallbackResponse,
-    });
 
     /* Render the Sign-In button */
     // @ts-expect-error google doesnt exist according to typescript
@@ -80,7 +90,6 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
   return (
     <div>
       {isSignedIn ?
-        // @ts-expect-error unknown decoded token type
         <UserProfile image={decodedToken.picture} onLogOut={googleLogout} />
         :
         <div id={renderButtonElId}></div>

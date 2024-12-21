@@ -23,49 +23,128 @@ public class DriverService {
     @PostConstruct
     public void loadData() {
         if (driverRepository.count() <= 0) {
-            Driver driver = Driver.builder()
-                    .driverCode("919e46b3-57d3-4775-b5a8-8dc5b2776d0c")
-                    .firstName("Lewis")
-                    .lastName("Hamilton")
-                    .country("United Kingdom")
-                    .teamCode("e600a035-1f38-4319-99d2-01607db9c980")
-                    .seasonPoints(50)
-                    .imageUrl("images/hamilton.jpg")
-                    .build();
+            List<Driver> drivers = List.of(
+                    Driver.builder()
+                            .driverCode("919e46b3-57d3-4775-b5a8-8dc5b2776d0c")
+                            .firstName("Lewis")
+                            .lastName("Hamilton")
+                            .country("United Kingdom")
+                            .teamCode("e600a035-1f38-4319-99d2-01607db9c980")
+                            .seasonPoints(50)
+                            .imageUrl("images/hamilton.jpg")
+                            .build(),
 
-            Driver driver1 = Driver.builder()
-                    .driverCode("c5709243-aadb-4c10-bafb-cdb8ed767790")
-                    .firstName("George")
-                    .lastName("Russel")
-                    .country("United Kingdom")
-                    .teamCode("e600a035-1f38-4319-99d2-01607db9c980")
-                    .imageUrl("images/george_russel.jpg")
-                    .seasonPoints(20)
-                    .build();
+                    Driver.builder()
+                            .driverCode("f7035391-c9bf-4034-ac5d-268563e35551")
+                            .firstName("George")
+                            .lastName("Russel")
+                            .country("United Kingdom")
+                            .teamCode("e600a035-1f38-4319-99d2-01607db9c980")
+                            .seasonPoints(20)
+                            .imageUrl("images/george_russel.jpg")
+                            .build(),
 
-            Driver driver2 = Driver.builder()
-                    .driverCode("6baeb4c9-f7d1-4176-9854-f50ff290aae0")
-                    .firstName("Max")
-                    .lastName("Verstappen")
-                    .country("The Netherlands")
-                    .teamCode("ac879010-39cd-4562-badf-732664ea68c3")
-                    .imageUrl("images/max-verstappen.webp")
-                    .seasonPoints(10)
-                    .build();
-            Driver driver3 = Driver.builder()
-                    .driverCode("1bdd16ec-3a29-484c-9c44-abcaa8cdb23a")
-                    .firstName("Carlos")
-                    .lastName("Sainz Jr.")
-                    .country("Spain")
-                    .teamCode("ac879010-39cd-4562-badf-732664ea68c3")
-                    .imageUrl("images/sainz.jpg")
-                    .seasonPoints(4)
-                    .build();
+                    Driver.builder()
+                            .driverCode("6baeb4c9-f7d1-4176-9854-f50ff290aae0")
+                            .firstName("Max")
+                            .lastName("Verstappen")
+                            .country("The Netherlands")
+                            .teamCode("ac879010-39cd-4562-badf-732664ea68c3")
+                            .seasonPoints(10)
+                            .imageUrl("images/max-verstappen.webp")
+                            .build(),
 
-            driverRepository.save(driver);
-            driverRepository.save(driver1);
-            driverRepository.save(driver2);
-            driverRepository.save(driver3);
+                    Driver.builder()
+                            .driverCode("1bdd16ec-3a29-484c-9c44-abcaa8cdb23a")
+                            .firstName("Carlos")
+                            .lastName("Sainz Jr.")
+                            .country("Spain")
+                            .teamCode("f41d8b77-7292-4d3a-8827-2b0fc09e3c24")
+                            .seasonPoints(4)
+                            .imageUrl("images/sainz.jpg")
+                            .build(),
+
+                    Driver.builder()
+                            .driverCode("54cd93a4-bfd7-4f65-87f6-dce1d5d55df0")
+                            .firstName("Charles")
+                            .lastName("Leclerc")
+                            .country("Monaco")
+                            .teamCode("f41d8b77-7292-4d3a-8827-2b0fc09e3c24")
+                            .seasonPoints(32)
+                            .imageUrl("images/leclerc.jpg")
+                            .build(),
+
+                    Driver.builder()
+                            .driverCode("fe38126c-47da-4f96-8816-8b268f6faca4")
+                            .firstName("Oscar")
+                            .lastName("Piastri")
+                            .country("Australia")
+                            .teamCode("4f5db9ab-c6f9-4a7b-a9bc-6d9fcd4ef842")
+                            .seasonPoints(25)
+                            .imageUrl("images/piastri.jpg")
+                            .build(),
+
+                    Driver.builder()
+                            .driverCode("9f8e2b0c-8f58-44cf-bf03-2a4b9bcbcde2")
+                            .firstName("Lance")
+                            .lastName("Stroll")
+                            .country("Canada")
+                            .teamCode("5d9c95c1-7e4d-4f1b-b1b5-62d762fe1a4b")
+                            .seasonPoints(292)
+                            .imageUrl("images/stroll.jpg")
+                            .build(),
+
+                    Driver.builder()
+                            .driverCode("dce84971-05de-4e4f-ad98-1978481618a8")
+                            .firstName("Fernando")
+                            .lastName("Alonso")
+                            .country("Spain")
+                            .teamCode("5d9c95c1-7e4d-4f1b-b1b5-62d762fe1a4b")
+                            .seasonPoints(18)
+                            .imageUrl("images/alonso.jpg")
+                            .build(),
+
+                    Driver.builder()
+                            .driverCode("3c7b8e9f-6b8a-4e7d-9b6f-3a8c5e4b9a8d")
+                            .firstName("Lando")
+                            .lastName("Norris")
+                            .country("United Kingdom")
+                            .teamCode("4f5db9ab-c6f9-4a7b-a9bc-6d9fcd4ef842")
+                            .seasonPoints(16)
+                            .imageUrl("images/norris.jpg")
+                            .build(),
+
+                    Driver.builder()
+                            .driverCode("8a7b9c6e-5b9d-4f7a-9e8c-3f7b9e8a6c7d")
+                            .firstName("Sergio")
+                            .lastName("Perez")
+                            .country("Mexico")
+                            .teamCode("ac879010-39cd-4562-badf-732664ea68c3")
+                            .seasonPoints(28)
+                            .imageUrl("images/perez.jpg")
+                            .build(),
+
+                    Driver.builder()
+                            .driverCode("9d40a5af-a9d6-4588-ae9b-9588956a6132")
+                            .firstName("Nico")
+                            .lastName("Hulkenberg")
+                            .country("Germany")
+                            .teamCode("9334c873-d370-4777-9c18-4385627da6c2")
+                            .seasonPoints(571)
+                            .imageUrl("images/hulkenberg.jpg")
+                            .build(),
+
+                    Driver.builder()
+                            .driverCode("8dd27ff0-30d1-4052-8d9d-086906323fc3")
+                            .firstName("Kevin")
+                            .lastName("Magnussen")
+                            .country("Denmark")
+                            .teamCode("9334c873-d370-4777-9c18-4385627da6c2")
+                            .seasonPoints(202)
+                            .imageUrl("images/magnussen.jpg")
+                            .build());
+
+            driverRepository.saveAll(drivers);
         }
     }
 

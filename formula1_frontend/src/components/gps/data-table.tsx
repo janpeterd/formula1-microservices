@@ -70,7 +70,7 @@ export function DataTable<TData, TValue>({
           <Link to="/grand-prix-add">Add a new Grand Prix</Link>
         </Button>
       </div>
-      <div className="rounded-md border">
+      <div className="w-full rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

@@ -26,8 +26,9 @@ public class ImageUploadService {
         }
 
         ArrayList<String> allowedTypes = new ArrayList<String>(
-                List.of("image/jpeg", "image/png", "image/webp", "image/octet-stream"));
+                List.of("image/jpeg", "image/png", "image/webp", "image/avif", "application/octet-stream"));
 
+        System.out.println("CONTENT TYPE IMAGE UPLOAD: " + file.getContentType());
         if (allowedTypes.contains(file.getContentType())) {
 
             String fileName = file.getOriginalFilename();
@@ -39,7 +40,7 @@ public class ImageUploadService {
             return relativePath.toString();
         }
         throw new InvalidContentTypeException(
-                "Invalid file type. Allowed types are: image/jpeg, image/png, image/webp.");
+                "Invalid file type. Allowed types are: image/jpeg, image/png, image/webp, image/avif, image/octet-stream.");
 
     }
 }

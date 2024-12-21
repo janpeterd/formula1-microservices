@@ -25,7 +25,7 @@ function GrandPrixAdminPage() {
     fetchGps();
   }, []);
   return (
-    <div>
+    <div className="w-ful px-4">
       <DataTable data={gps} columns={columns} reload_data={fetchGps} toast={toast} navigate={navigate} />
     </div>
   )

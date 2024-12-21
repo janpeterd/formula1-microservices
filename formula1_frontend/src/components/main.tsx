@@ -21,7 +21,7 @@ function Main() {
           <div className="container mx-auto mt-8"><DriverPage /></div>
         } />
         <Route path={"/gp-admin"} element={
-          <div className="container mx-auto mt-8">
+          <div className="mt-8">
             <Secure>
               <GrandPrixAdminPage />
             </Secure>
@@ -30,7 +30,7 @@ function Main() {
         <Route
           path="/grand-prix-add/:gpCode?"
           element={
-            <div className="container mx-auto mt-8">
+            <div className="container mx-auto my-8">
               <Secure>
                 <GrandPrixForm />
               </Secure>

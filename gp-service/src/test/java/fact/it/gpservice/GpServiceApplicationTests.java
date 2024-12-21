@@ -100,7 +100,7 @@ class GpServiceTest {
 
         gpService.loadData();
 
-        verify(gpRepository, atLeast(1)).save(any(Gp.class));
+        verify(gpRepository, atLeast(1)).saveAll(any(List.class));
     }
 
     @Test

@@ -2,7 +2,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { FormControl } from "./ui/form";
 import { Button } from "./ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./ui/command";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, LogIn } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type ValueLabel = {
@@ -44,19 +44,21 @@ function ObjectSelect({ objectName, objects: objects, value, onChange }: ObjectS
             <CommandEmpty>No {objectName} found.</CommandEmpty>
             <CommandGroup>
               {objects.map((object) => (
-                <CommandItem
-                  value={object.value}
-                  key={object.value}
-                  onSelect={() => onChange(object.value)} // Call the onChange prop when selected
-                >
-                  {object.label}
-                  <Check
-                    className={cn(
-                      "ml-auto",
-                      object.value === value ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                </CommandItem>
+                <>
+                  <CommandItem
+                    value={object.label}
+                    key={object.value}
+                    onSelect={() => onChange(object.value)} // Call the onChange prop when selected
+                  >
+                    {object.label}
+                    <Check
+                      className={cn(
+                        "ml-auto",
+                        object.value === value ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                </>
               ))}
             </CommandGroup>
           </CommandList>

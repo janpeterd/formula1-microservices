@@ -30,7 +30,7 @@ public class ImageUploadController {
         } catch (IOException e) {
             return new ResponseEntity<>("Error uploading image", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidContentTypeException e) {
-            return new ResponseEntity<>("Invalid image type. Only png, jpg and webp are allowed",
+            return new ResponseEntity<>("Invalid image type. Only png, jpg, avif and webp are allowed",
                     HttpStatus.BAD_REQUEST);
         }
     }

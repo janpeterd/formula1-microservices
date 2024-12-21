@@ -1,12 +1,14 @@
 import TeamResponse from "@/dto/teamResponse";
 import TeamApi from "@/lib/team_service";
 import { useState, useEffect } from "react";
-import GrandPrixStat from "./gp-stat";
 import { API_URL } from "@/lib/utils";
+import { Skeleton } from "./ui/skeleton";
 
 
 function TeamInfoSmall({ teamCode }: { teamCode: string }) {
   const [team, setTeam] = useState<TeamResponse>();
+  const [imageUrlHasError, setImageUrlHasError] = useState<boolean>(false);
+  const [logoUrlHasError, setLogoUrlHasError] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTeam = async () => {
@@ -22,11 +24,29 @@ function TeamInfoSmall({ teamCode }: { teamCode: string }) {
 
   return (
     <div>
-      {team != null
+      {team !== undefined
         ?
-        <div className="flex gap-x-6">
-          <img src={`${API_URL}/${team.logoUrl}`} alt="logo" className="w-40 object-contain" />
-          <GrandPrixStat label="Team" stat={team.name} />
+        <div className="border-neutral-300 border-r-2 border-b-2 rounded-br-2xl">
+
+          <div>
+            <div className="flex gap-x-6 items-center px-2">
+              {logoUrlHasError
+                ?
+                <Skeleton className="w-40 h-[115px] bg-line-pattern" />
+                :
+                <img src={`${API_URL}/${team.logoUrl}`} alt="logo" className="w-40 h-[115px] object-contain" onError={() => setLogoUrlHasError(true)} />
+              }
+              <p className="text-2xl font-bold text-center w-full py-6 bg-bg_accent rounded-lg">{team.name}</p>
+            </div>
+          </div>
+          <div className="flex justify-center items-center">
+            {imageUrlHasError
+              ?
+              <Skeleton className="w-full h-[115px] bg-line-pattern" />
+              :
+              <img src={`${API_URL}/${team.imageUrl}`} alt="imageUrl" className="w-full h-[115px] object-contain" onError={() => setImageUrlHasError(true)} />
+            }
+          </div>
         </div>
         :
         <p>No team found</p>

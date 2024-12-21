@@ -127,6 +127,7 @@ services:
      - driver-service
      - team-service
      - gp-service
+     - image-service
    image: janpeterd/formula1-api-gateway:latest
    ports:
      - 8083:8083
@@ -134,10 +135,12 @@ services:
      - driver-service
      - team-service
      - gp-service
+     - image-service
    environment:
      DRIVER_SERVICE_BASEURL: driver-service:8081
      TEAM_SERVICE_BASEURL: team-service:8080
      GP_SERVICE_BASEURL: gp-service:8082
+     IMAGE_SERVICE_BASEURL: image-service:8084
 
 
 volumes:

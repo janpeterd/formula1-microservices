@@ -32,24 +32,64 @@ public class TeamService {
     @PostConstruct
     public void loadData() {
         if (teamRepository.count() <= 0) {
-            Team team = Team.builder()
-                    .teamCode("e600a035-1f38-4319-99d2-01607db9c980")
-                    .name("Mercedes")
-                    .points(10)
-                    .imageUrl("images/mercedes_car.avif")
-                    .logoUrl("images/mercedes.avif")
-                    .build();
+            List<Team> teams = List.of(
+                    Team.builder()
+                            .teamCode("e600a035-1f38-4319-99d2-01607db9c980")
+                            .name("Mercedes")
+                            .points(70)
+                            .imageUrl("images/mercedes_car.avif")
+                            .logoUrl("images/mercedes.avif")
+                            .build(),
 
-            Team team1 = Team.builder()
-                    .teamCode("ac879010-39cd-4562-badf-732664ea68c3")
-                    .name("Red Bull Racing")
-                    .points(20)
-                    .imageUrl("images/red-bull-racing_car.avif")
-                    .logoUrl("images/red_bull.avif")
-                    .build();
+                    Team.builder()
+                            .teamCode("ac879010-39cd-4562-badf-732664ea68c3")
+                            .name("Red Bull Racing")
+                            .points(90)
+                            .imageUrl("images/red-bull-racing_car.avif")
+                            .logoUrl("images/red_bull.avif")
+                            .build(),
 
-            teamRepository.save(team);
-            teamRepository.save(team1);
+                    Team.builder()
+                            .teamCode("f41d8b77-7292-4d3a-8827-2b0fc09e3c24")
+                            .name("Ferrari")
+                            .points(60)
+                            .imageUrl("images/ferrari_car.avif")
+                            .logoUrl("images/ferrari.webp")
+                            .build(),
+
+                    Team.builder()
+                            .teamCode("4f5db9ab-c6f9-4a7b-a9bc-6d9fcd4ef842")
+                            .name("McLaren")
+                            .points(45)
+                            .imageUrl("images/mclaren_car.avif")
+                            .logoUrl("images/mclaren.avif")
+                            .build(),
+
+                    Team.builder()
+                            .teamCode("5d9c95c1-7e4d-4f1b-b1b5-62d762fe1a4b")
+                            .name("Aston Martin")
+                            .points(35)
+                            .imageUrl("images/aston-martin_car.avif")
+                            .logoUrl("images/aston-martin.avif")
+                            .build(),
+
+                    Team.builder()
+                            .teamCode("9334c873-d370-4777-9c18-4385627da6c2")
+                            .name("Haas")
+                            .points(5)
+                            .imageUrl("images/haas_car.avif")
+                            .logoUrl("images/haas.avif")
+                            .build(),
+
+                    Team.builder()
+                            .teamCode("3f9d11dc-4b6b-4af7-93a8-c7323d7e5ab8")
+                            .name("Alpine")
+                            .points(25)
+                            .imageUrl("images/alpine_car.avif")
+                            .logoUrl("images/alpine.avif")
+                            .build());
+
+            teamRepository.saveAll(teams);
         }
     }
 

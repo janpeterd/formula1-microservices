@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import DriverCard from "./driver-card";
 import GrandPrixStat from "./gp-stat";
 import GpResponse from "@/dto/gpResponse";
@@ -17,37 +18,41 @@ function GrandPrixDetails({ gp }: { gp: GpResponse }) {
           <GrandPrixStat label="Laps" stat={gp.laps.toString()} />
           <GrandPrixStat label="Race date" stat={gp.raceDate.toString()} />
         </div>
-        <div className="p-3">
-          <h2 className="font-f1 text-3xl py-6">Description</h2>
-          <p className="leading-7 [&:not(:first-child)]:mt-6">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum ullam neque sit magnam quis ipsam dignissimos repellat accusamus, eveniet cumque optio aperiam saepe. Ipsam harum asperiores, quo et similique excepturi.
-          </p>
-        </div>
       </div>
       <div className="w-full h-6 bg-line-pattern bg-repeat my-16"></div>
       <div className="flex gap-12 justify-center">
         <div className="p-3">
           <h2 className="font-f1 text-5xl py-6 text-center">Results</h2>
-          <div className="flex flex-col justify-center items-center gap-y-6">
-            <div>
+          <div className="flex flex-wrap justify-center items-center gap-x-6">
+            <motion.div
+              initial={{ opacity: 0, y: 100, scale: 0 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 1, type: "spring", visualDuration: 0.3, bounce: 0.4 }}
+              viewport={{ once: true }}>
               <span className="text-2xl font-f1 text-bold">Winner</span>
               <DriverCard driver={gp.winningDriver} />
-            </div>
-            <div className="flex justify-center items-center gap-x-4 lg:gap-x-48 flex-wrap md:flex-nowrap">
-              <div>
-                <span className="text-xl font-f1 text-bold">Second place</span>
-                <DriverCard driver={gp.secondDriver} />
-              </div>
-              <div>
-                <span className="text-xl font-f1 text-bold">Third place</span>
-                <DriverCard driver={gp.thirdDriver} />
-              </div>
-            </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 100, scale: 0 }}
+              transition={{ delay: 0.5, type: "spring", visualDuration: 0.6, bounce: 0.2 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true }}>
+              <span className="text-xl font-f1 text-bold">Second place</span>
+              <DriverCard driver={gp.secondDriver} />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 100, scale: 0 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: 0.1, type: "spring", visualDuration: 0.6, bounce: 0.2 }}
+              viewport={{ once: true }}>
+              <span className="text-xl font-f1 text-bold">Third place</span>
+              <DriverCard driver={gp.thirdDriver} />
+            </motion.div>
           </div>
         </div>
-        <div className="hidden md:block text-5xl text-center w-1/3 bg-line-pattern" />
+        <div className="hidden md:block text-5xl text-center w-56 bg-line-pattern" />
       </div>
-    </div>
+    </div >
   )
 
 }

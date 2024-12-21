@@ -79,14 +79,14 @@ spring:
           filters:
             - SetPath=/api/team/{teamCode}
         - id: get-image-service
-          uri: http://${TEAM_SERVICE_BASEURL:localhost:8084}
+          uri: http://${IMAGE_SERVICE_BASEURL:localhost:8084}
           predicates:
             - Path=/images/**
             - Method=GET
           filters:
           - PreserveHostHeader
         - id: image-service-post
-          uri: http://${TEAM_SERVICE_BASEURL:localhost:8084}
+          uri: http://${IMAGE_SERVICE_BASEURL:localhost:8084}
           predicates:
             - Path=/images
             - Method=POST

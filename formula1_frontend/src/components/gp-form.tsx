@@ -80,48 +80,55 @@ const gpSchema = z.object({
     ),
 })
 
+type Paths = {
+  imageUrl: string;
+  trackImageUrl: string
+}
+
 type ValueLabel = {
   value: string;
   label: string;
 };
 
-type GpFormRequest = {
-  name: string;
-  country: string;
-  city: string;
-  distanceMeters: number;
-  laps: number;
-  winningDriverCode: string;
-  secondDriverCode: string;
-  thirdDriverCode: string;
-  winningTeamCode: string;
-  raceDate: Date;
-  imageUrl: File;
-  trackImageUrl: File;
-}
-
 function GrandPrixForm() {
-  const { gpCode: gpCode } = useParams();
+  const { gpCode } = useParams();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [drivers, setDrivers] = useState<ValueLabel[]>([]);
   const [teams, setTeams] = useState<ValueLabel[]>([]);
-  const [initialValues, setInitialValues] = useState<Partial<GpFormRequest>>({});
   const [imageSrc, setImageSrc] = useState<string>("");
   const [trackImageSrc, setTrackImageSrc] = useState<string>("");
   const [hasUploadedImages, setHasUploadedImages] = useState(false);
 
+  // Initialize form with empty default values
+  const form = useForm<z.infer<typeof gpSchema>>({
+    resolver: zodResolver(gpSchema),
+    defaultValues: {
+      name: "",
+      country: "",
+      city: "",
+      distanceMeters: 0,
+      laps: 0,
+      winningDriverCode: "",
+      secondDriverCode: "",
+      thirdDriverCode: "",
+      winningTeamCode: "",
+      raceDate: new Date(),
+    }
+  });
+
   useEffect(() => {
     const fetchGpData = async () => {
       if (gpCode && !hasUploadedImages) {
-        const response = await GpApi.getByCode(gpCode);
-        setImageSrc(`${API_URL}/${response.data.imageUrl}`);
-        setTrackImageSrc(`${API_URL}/${response.data.trackImageUrl}`);
-        const imageData = await urlToFile(`${API_URL}/${response.data.imageUrl}`);
-        const trackImageData = await urlToFile(`${API_URL}/${response.data.trackImageUrl}`);
+        try {
+          const response = await GpApi.getByCode(gpCode);
+          setImageSrc(`${API_URL}/${response.data.imageUrl}`);
+          setTrackImageSrc(`${API_URL}/${response.data.trackImageUrl}`);
+          const imageData = await urlToFile(`${API_URL}/${response.data.imageUrl}`);
+          const trackImageData = await urlToFile(`${API_URL}/${response.data.trackImageUrl}`);
 
-        setInitialValues(
-          {
+          // Use form.reset to update all form values at once
+          form.reset({
             ...response.data,
             imageUrl: imageData,
             trackImageUrl: trackImageData,
@@ -129,9 +136,16 @@ function GrandPrixForm() {
             secondDriverCode: response.data.secondDriver.driverCode,
             thirdDriverCode: response.data.thirdDriver.driverCode,
             winningTeamCode: response.data.winningTeam.teamCode,
-          }
-        );
-
+            raceDate: new Date(response.data.raceDate)
+          });
+        } catch (error) {
+          console.error("Failed to fetch GP data:", error);
+          toast({
+            variant: "destructive",
+            title: "Error loading Grand Prix data",
+            description: "Failed to load the Grand Prix details."
+          });
+        }
       }
     };
 
@@ -157,12 +171,17 @@ function GrandPrixForm() {
         );
       } catch (err) {
         console.error("Failed to fetch data: ", err);
+        toast({
+          variant: "destructive",
+          title: "Error loading data",
+          description: "Failed to load drivers and teams data."
+        });
       }
     };
 
     fetchGpData();
     fetchOptions();
-  }, [gpCode, hasUploadedImages]);
+  }, [gpCode, hasUploadedImages, form, toast]);
 
 
   const handleImageUpload = (file: File, isTrack: boolean) => {
@@ -176,54 +195,8 @@ function GrandPrixForm() {
     })
   };
 
-
-
-  const form = useForm<z.infer<typeof gpSchema>>({
-    resolver: zodResolver(gpSchema),
-    defaultValues: {
-      name: "",
-      country: "",
-      city: "",
-      distanceMeters: 1,
-      laps: 1,
-      raceDate: undefined,
-      winningTeamCode: "",
-      winningDriverCode: "",
-      secondDriverCode: "",
-      thirdDriverCode: "",
-    },
-  });
-
-  if (gpCode && initialValues && !hasUploadedImages) {
-    const raceDate = initialValues.raceDate ? new Date(initialValues.raceDate) : new Date();
-    form.setValue("name", initialValues.name as string);
-    form.setValue("country", initialValues.country as string);
-    form.setValue("city", initialValues.city as string);
-    form.setValue("distanceMeters", initialValues.distanceMeters as number);
-    form.setValue("laps", initialValues.laps as number);
-    form.setValue("winningDriverCode", initialValues.winningDriverCode as string);
-    form.setValue("secondDriverCode", initialValues.secondDriverCode as string);
-    form.setValue("thirdDriverCode", initialValues.thirdDriverCode as string);
-    form.setValue("winningTeamCode", initialValues.winningTeamCode as string);
-    form.setValue("raceDate", raceDate);
-    if (initialValues.imageUrl) {
-      form.setValue("imageUrl", initialValues.imageUrl);
-    }
-
-    if (initialValues.trackImageUrl) {
-      form.setValue("trackImageUrl", initialValues.trackImageUrl);
-    }
-  }
-
-  type Paths = {
-    imageUrl: string;
-    trackImageUrl: string
-  }
-
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof gpSchema>) {
-
-    console.log(gpCode ? "Updating..." : "Creating...", values);
     const paths: Paths = { imageUrl: "", trackImageUrl: "" };
     // Upload imageUrl
     if (values.imageUrl && values.trackImageUrl) {
@@ -506,7 +479,11 @@ function GrandPrixForm() {
                   <FormControl>
                     <>
                       <Label className="block text-left" htmlFor="imageUpload">Image</Label>
-                      <img src={imageSrc} alt="field" className="rounded-lg max-w-36 max-h-36 ml-1" />
+                      {imageSrc
+                        ?
+                        <img src={imageSrc} alt="Grand Prix Image" className="rounded-lg max-w-36 max-h-36 ml-1" />
+                        : null
+                      }
                       <Input
                         id="fileUpload"
                         name="imageUrl"
@@ -514,6 +491,7 @@ function GrandPrixForm() {
                         onChange={(e) => {
                           if (e.target.files && e.target.files[0]) {
                             field.onChange(e.target.files[0]); // Set the file in the form state
+                            handleImageUpload(e.target.files[0], false);
                           }
                         }}
                       />
@@ -530,7 +508,11 @@ function GrandPrixForm() {
                   <FormControl>
                     <>
                       <Label className="block text-left" htmlFor="trackImageUpload">Track Image</Label>
-                      <img src={trackImageSrc} alt="field" className="rounded-lg max-w-36 max-h-36 ml-1" />
+                      {trackImageSrc
+                        ?
+                        <img src={trackImageSrc} alt="Grand Prix Track Image" className="rounded-lg max-w-36 max-h-36 ml-1" />
+                        : null
+                      }
                       <Input
                         id="trackImageUpload"
                         name="trackImageUrl"
@@ -553,7 +535,7 @@ function GrandPrixForm() {
             </Button>
           </form>
         </Form>
-      </div>
+      </div >
     </>
   )
 }

@@ -8,24 +8,6 @@ import { Button } from "../ui/button"
 import DeleteButton from "./delete-button"
 export const columns: ColumnDef<GpResponse>[] = [
   {
-    id: "edit",
-    header: () => (
-      <div className="text-center">Actions</div>
-    ),
-    cell: ({ row, table }) => {
-      const gpCode = row.original.gpCode; // Ensure `gpCode` is accessible in your data
-
-      return (
-        <div className="flex flex-col justify-center items-center gap-y-0.5">
-          <Button onClick={() => table.options.meta?.navigate(`/grand-prix-add/${row.original.gpCode}`)} className="bg-dark px-3 py-1">
-            <Pencil />
-          </Button>
-          <DeleteButton gpCode={gpCode} row={row} table={table} />
-        </div>
-      );
-    },
-  },
-  {
     id: "name",
     accessorKey: "name",
     header: ({ column }) => (
@@ -114,5 +96,23 @@ export const columns: ColumnDef<GpResponse>[] = [
     cell: ({ row }) => (
       <img src={`http://localhost:8084/${row.getValue("trackImageUrl")}`} alt="Track Image" style={{ width: "100px", height: "auto" }} />
     ),
+  },
+  {
+    id: "edit",
+    header: () => (
+      <div className="text-center">Actions</div>
+    ),
+    cell: ({ row, table }) => {
+      const gpCode = row.original.gpCode; // Ensure `gpCode` is accessible in your data
+
+      return (
+        <div className="flex flex-col justify-center items-center gap-y-0.5">
+          <Button onClick={() => table.options.meta?.navigate(`/grand-prix-add/${row.original.gpCode}`)} className="bg-dark px-3 py-1">
+            <Pencil />
+          </Button>
+          <DeleteButton gpCode={gpCode} row={row} table={table} />
+        </div>
+      );
+    },
   },
 ]
