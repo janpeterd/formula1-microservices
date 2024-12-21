@@ -8,14 +8,11 @@ ENV NODE_ENV production
 WORKDIR /app
 
 # Installing dependencies
-COPY ./package.json ./
-RUN npm install -D
+COPY ./package*.json ./
+RUN npm install
 
 # Copying all the files in our project
 COPY . .
-
-RUN npm remove tsc
-RUN npm install -D typescript
 
 # Building our application
 RUN npm run build
