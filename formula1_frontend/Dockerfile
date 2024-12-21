@@ -14,7 +14,8 @@ RUN npm install -D
 # Copying all the files in our project
 COPY . .
 
-RUN npm install typescript
+RUN npm remove tsc
+RUN npm install -D typescript
 
 # Building our application
 RUN npm run build
