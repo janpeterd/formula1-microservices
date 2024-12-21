@@ -14,6 +14,8 @@ RUN npm install -D
 # Copying all the files in our project
 COPY . .
 
+RUN npm install typescript
+
 # Building our application
 RUN npm run build
 
