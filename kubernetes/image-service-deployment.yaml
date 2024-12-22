@@ -20,7 +20,7 @@ spec:
         - containerPort: 8084
         volumeMounts:
         - name: image-storage
-          mountPath: /target/classes/static
+          mountPath: /target/classes/static/images
       volumes:
       - name: image-storage
         persistentVolumeClaim:

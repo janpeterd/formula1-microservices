@@ -8,4 +8,4 @@ spec:
   resources:
     requests:
       storage: 5Gi
-
+  storageClassName: ""  # Leave empty if the PV does not have a storage class
