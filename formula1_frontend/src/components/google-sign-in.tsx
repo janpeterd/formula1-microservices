@@ -47,13 +47,16 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
   // @ts-expect-error google callback response unknown type
   const handleCallbackResponse = useCallback((response) => {
     document.getElementById(renderButtonElId)?.classList.add("hidden");
+    console.log("renderbuttonel", document.getElementById(renderButtonElId));
 
     const idToken = response.credential;
     setIsSignedIn(true);
-    console.log("Encoded JWT ID Token:", idToken);
+    console.log("decoded JWT ID Token:", idToken);
 
     // Store the token in a secure cookie
     Cookies.set("idToken", idToken, { expires: 1, secure: true, sameSite: "Strict" });
+    console.log("SET COOKIES");
+
 
     // Decode the token
     const decoded = jwtDecode(idToken);
@@ -67,8 +70,6 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
   }, [renderButtonElId, setIsSignedIn, toast]);
 
   useEffect(() => {
-
-
     function googleInit() {
       console.log("GOOGLE OAUTH2 INIT");
 
@@ -94,7 +95,7 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
           googleLogout();
         } else {
           setIsSignedIn(true);
-          console.log("Encoded JWT ID Token:", idToken);
+          console.log("decoded JWT ID Token:", idToken);
         }
       }
     } else {

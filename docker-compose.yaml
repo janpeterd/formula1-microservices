@@ -29,6 +29,10 @@ services:
     image: redis:latest
     container_name: redis
 
+ redis-ratelimit:
+    image: redis:latest
+    container_name: redis-ratelimit
+
  node_exporter:
   image: quay.io/prometheus/node-exporter:latest
   container_name: node_exporter
@@ -151,6 +155,8 @@ services:
      TEAM_SERVICE_BASEURL: team-service:8080
      GP_SERVICE_BASEURL: gp-service:8082
      IMAGE_SERVICE_BASEURL: image-service:8084
+     SPRING_REDIS_HOST: redis-ratelimit
+     SPRING_REDIS_PORT: 6379
 
 
 volumes:

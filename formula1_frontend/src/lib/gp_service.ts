@@ -5,7 +5,6 @@ import { API_URL } from "./utils";
 import Cookies from "js-cookie";
 
 const endpoint = "gps";
-const idToken = Cookies.get("idToken");
 
 export default class GpApi {
   static async get() {
@@ -16,6 +15,7 @@ export default class GpApi {
   }
 
   static async post(payload: GpRequest) {
+    const idToken = Cookies.get("idToken");
     return axios.post(`${API_URL}/${endpoint}`, payload, {
       headers: {
         Authorization: `Bearer ${idToken}`,
@@ -23,6 +23,7 @@ export default class GpApi {
     });
   }
   static async put(gpCode: string, payload: GpRequest) {
+    const idToken = Cookies.get("idToken");
     await axios.put(`${API_URL}/${endpoint}/${gpCode}`, payload, {
       headers: {
         Authorization: `Bearer ${idToken}`,
@@ -30,6 +31,7 @@ export default class GpApi {
     });
   }
   static async delete(gpCode: string) {
+    const idToken = Cookies.get("idToken");
     await axios.delete(`${API_URL}/${endpoint}?gpCode=${gpCode}`, {
       headers: {
         Authorization: `Bearer ${idToken}`,
