@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gp-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gp-service
+  template:
+    metadata:
+      labels:
+        app: gp-service
+    spec:
+      containers:
+      - name: gp-service
+        image: janpeterd/gp-service:latest
+        ports:
+        - containerPort: 8082
+        env:
+        - name: DRIVER_SERVICE_BASEURL
+          value: "driver-service:8081"
+        - name: TEAM_SERVICE_BASEURL
+          value: "team-service:8080"
+        - name: MYSQL_DB_USERNAME
+          value: "root"
+        - name: MYSQL_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-gp-secret
+              key: password
+        - name: MYSQL_DB_HOST
+          value: "mysql-gp"
+        - name: MYSQL_DB_PORT
+          value: "3306"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 10

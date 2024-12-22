@@ -2,6 +2,42 @@
 apiVersion: v1
 kind: Service
 metadata:
+  name: mongo-team
+spec:
+  selector:
+    app: mongo-team
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-driver
+spec:
+  selector:
+    app: mysql-driver
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-gp
+spec:
+  selector:
+    app: mysql-gp
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: driver-service
 spec:
   selector:
@@ -62,3 +98,4 @@ spec:
     - protocol: TCP
       port: 8083
       targetPort: 8083
+

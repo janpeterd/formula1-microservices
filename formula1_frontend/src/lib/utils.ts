@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const API_URL = import.meta.env.PROD
-  ? "http://api-gateway:8083"
+  ? "http://127.0.0.1:8083"
   : "http://127.0.0.1:8083";
 
 export function getDriverFullName(driver: DriverResponse) {
