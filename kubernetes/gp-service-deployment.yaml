@@ -32,23 +32,4 @@ spec:
         - name: MYSQL_DB_HOST
           value: "mysql-gp"
         - name: MYSQL_DB_PORT
-          value: "3306"
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        readinessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8082
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        livenessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8082
-          initialDelaySeconds: 30
-          periodSeconds: 10
+          value: "3307"
