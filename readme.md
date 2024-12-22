@@ -1,11 +1,7 @@
 # Formula 1 Microservices
 
+![Infrastructure diagram](./images/diagram.png)
 ![Frontend GP page](./images/frontend_gp_page.png)
-
-- Documentatie:
-
-  - Beschrijving van het gekozen thema, je microservices en andere componenten zoals gateways in lijst en schema, en je uitbreidingen + link naar de zaken die hosted zijn op GitHub README.md
-  - Aantoonbare werking van alle endpoints door screenshots van Postman requests op GitHub README.md
 
 ## Thema
 
