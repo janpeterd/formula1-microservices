@@ -36,14 +36,14 @@ public class ImageUploadController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> createGp(@RequestParam MultipartFile file) {
+    public ResponseEntity<String> uploadImage(@RequestParam MultipartFile file) {
         try {
             return new ResponseEntity<>(imageUploadService.uploadImage(file), HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>("Error uploading image", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (InvalidContentTypeException e) {
             return new ResponseEntity<>("Invalid image type. Only png, jpg, avif and webp are allowed",
-                HttpStatus.BAD_REQUEST);
+                    HttpStatus.BAD_REQUEST);
         }
     }
 }

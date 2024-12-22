@@ -40,6 +40,7 @@ public class SecurityConfig {
             "http://localhost",
             "http://127.0.0.1",
             "http://0.0.0.0",
+            "http://microservices.formula1.ms",
             "http://formula1-frontend")); // Allowed
     // origins
     config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allowed methods

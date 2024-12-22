@@ -54,7 +54,7 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
     console.log("decoded JWT ID Token:", idToken);
 
     // Store the token in a secure cookie
-    Cookies.set("idToken", idToken, { expires: 1, secure: true, sameSite: "Strict" });
+    Cookies.set("idToken", idToken, { expires: 1, secure: false, sameSite: "Strict" });
     console.log("SET COOKIES");
 
 
@@ -70,6 +70,7 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
   }, [renderButtonElId, setIsSignedIn, toast]);
 
   useEffect(() => {
+    console.log("SIGNED IN? (useeffect)", isSignedInState);
     function googleInit() {
       console.log("GOOGLE OAUTH2 INIT");
 
@@ -92,6 +93,7 @@ function GoogleSignInButton({ renderButtonElId }: { renderButtonElId: string }) 
       if (decodedToken?.exp) {
         const isExpired = Date.now() >= decodedToken.exp * 1000;
         if (isExpired) {
+          console.log("isExpired", isExpired)
           googleLogout();
         } else {
           setIsSignedIn(true);

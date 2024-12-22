@@ -44,10 +44,16 @@ opstart.
 Als laatste heb ik `Prometheus` en `Grafana` toegevoegd aan de stack. Deze
 applicaties worden via docker mee met al de rest gedeployed. Beiden zijn nuttig
 om data te visualiseren, maar omdat ik niet blij was met de beschikbare data in
-Prometheus heb ik nog twee extra docker-applicaties toegevoegd: `cadvisor` en
-`node_exporter`. `cadvisor` is verantwoordelijk voor het verzamelen
-van data over de containers en `node_exporter` verzamelt data over het
+Prometheus heb ik nog een extra docker-applicatie toegevoegd:`node_exporter`. ``node_exporter` verzamelt data over het
 host-systeem.
+
+Naast docker heb ik ook alles geconfigureerd om te werken met `kubernetes`. Dit
+betekent dat alle services, inclusief monitoring en ingress met kubernetes
+gedeployed kunnen worden. Op mijn computer kon ik het enkel testen met
+`minikube`, maar het zou in theorie op eender welke `kubernetes`-cluster moeten
+werken.
+
+Als laatste heb ik op de `api-gateway` ook **rate-limiting** geïmplementeerd.
 
 ## Componenten en informatie
 
@@ -73,8 +79,10 @@ Services:
 Extra:
 
 - `docker-compose`
-- `Prometheus` monitoring
+- `Kubernetes`
+- `Prometheus` monitoring (met node_exporter voor extra data)
 - `Grafana` visualisatie
+- api-gateway rate-limiting
 - `Frontend (React)`
   - Port: 5173 (`npm run dev`)
 

@@ -6,7 +6,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: localhost  # Replace with your domain
+  - host: microservices.formula1.ms
     http:
       paths:
       - path: /
@@ -16,10 +16,23 @@ spec:
             name: formula1-frontend
             port:
               number: 80
-      - path: /api
+  - host: api.microservices.formula1
+    http:
+      paths:
+      - path: /
         pathType: Prefix
         backend:
           service:
             name: api-gateway
             port:
               number: 8083
+  - host: monitoring.microservices.formula1
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port:
+              number: 3000
