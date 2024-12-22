@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: formula1-frontend
+  labels:
+    app: formula1-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: formula1-frontend
+  template:
+    metadata:
+      labels:
+        app: formula1-frontend
+    spec:
+      containers:
+      - name: formula1-frontend
+        image: janpeterd/formula1-frontend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: driver-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: driver-service
+  template:
+    metadata:
+      labels:
+        app: driver-service
+    spec:
+      containers:
+      - name: driver-service
+        image: janpeterd/driver-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8081
+        env:
+        - name: MYSQL_DB_USERNAME
+          value: "root"
+        - name: MYSQL_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-driver-secret
+              key: password
+        - name: MYSQL_DB_HOST
+          value: "mysql-driver"
+        - name: MYSQL_DB_PORT
+          value: "3306"

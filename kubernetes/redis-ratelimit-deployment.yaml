@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-ratelimit
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-ratelimit
+  template:
+    metadata:
+      labels:
+        app: redis-ratelimit
+    spec:
+      containers:
+      - name: redis-ratelimit
+        image: redis:latest
+        ports:
+        - containerPort: 6379

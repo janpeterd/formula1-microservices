@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: team-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: team-service
+  template:
+    metadata:
+      labels:
+        app: team-service
+    spec:
+      containers:
+      - name: team-service
+        image: janpeterd/team-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: MONGODB_PORT
+          value: "27017"
+        - name: MONGODB_HOST
+          value: "mongo-team"
+        - name: DRIVER_SERVICE_BASEURL
+          value: "driver-service:8081"
+

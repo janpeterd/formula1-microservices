@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-team
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-team
+  template:
+    metadata:
+      labels:
+        app: mongo-team
+    spec:
+      containers:
+      - name: mongo-team
+        image: mongo:latest
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongodb-storage
+          mountPath: /data/db
+      volumes:
+      - name: mongodb-storage
+        persistentVolumeClaim:
+          claimName: mongodb-team-pvc

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-driver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-driver
+  template:
+    metadata:
+      labels:
+        app: mysql-driver
+    spec:
+      containers:
+      - name: mysql-driver
+        image: mysql:latest
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-driver-secret
+              key: password
+        volumeMounts:
+        - name: mysql-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-storage
+        persistentVolumeClaim:
+          claimName: mysql-driver-pvc

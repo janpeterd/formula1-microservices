@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: image-service
+  template:
+    metadata:
+      labels:
+        app: image-service
+    spec:
+      containers:
+      - name: image-service
+        image: janpeterd/formula1-image-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8084
+        volumeMounts:
+        - name: image-storage
+          mountPath: /target/classes/static
+      volumes:
+      - name: image-storage
+        persistentVolumeClaim:
+          claimName: image-service-pvc

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+      - name: api-gateway
+        imagePullPolicy: Always
+        image: janpeterd/formula1-api-gateway:latest
+        ports:
+        - containerPort: 8083
+        env:
+        - name: DRIVER_SERVICE_BASEURL
+          value: "driver-service:8081"
+        - name: TEAM_SERVICE_BASEURL
+          value: "team-service:8080"
+        - name: GP_SERVICE_BASEURL
+          value: "gp-service:8082"
+        - name: IMAGE_SERVICE_BASEURL
+          value: "image-service:8084"
+        - name: SPRING_REDIS_HOST
+          value: "redis-ratelimit"
+        - name: SPRING_REDIS_PORT
+          value: "6379"
