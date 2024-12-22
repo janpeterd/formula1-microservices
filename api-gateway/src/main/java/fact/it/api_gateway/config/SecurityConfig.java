@@ -35,7 +35,12 @@ public class SecurityConfig {
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowedOrigins(
-        Arrays.asList("http://localhost:5173", "http://localhost", "http://127.0.0.1", "http://0.0.0.0")); // Allowed
+        Arrays.asList(
+            "http://localhost:5173",
+            "http://localhost",
+            "http://127.0.0.1",
+            "http://0.0.0.0",
+            "http://formula1-frontend")); // Allowed
     // origins
     config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Allowed methods
     config.setAllowedHeaders(Arrays.asList("*")); // Allow all headers
